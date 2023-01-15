@@ -35,6 +35,10 @@ public class Swerve extends SubsystemBase {
         };
         
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getPositions());
+
+        for(SwerveModule mod : mSwerveMods){
+            System.out.println("CANcoder on Module " + mod.moduleNumber + " took " + mod.CANcoderInitTime + " ms to be ready.");
+        }
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -102,6 +106,12 @@ public class Swerve extends SubsystemBase {
     public Rotation2d getYaw() {
         return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
+    public void resetModulesToAbsolute(){
+        for(SwerveModule mod : mSwerveMods){
+            mod.resetToAbsolute();
+        }
+    }
+    
     public void calibrateAndResetGyro() {
         gyro.calibrate();
         int counter = 0; boolean timedOut = false;
@@ -120,6 +130,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
+
         swerveOdometry.update(getYaw(), getPositions());
 
         for(SwerveModule mod : mSwerveMods){
