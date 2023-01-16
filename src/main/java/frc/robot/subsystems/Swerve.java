@@ -25,7 +25,6 @@ public class Swerve extends SubsystemBase {
 
     public Swerve() {
         gyro = new AHRS(SPI.Port.kMXP);
-        calibrateAndResetGyro();
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -125,6 +124,9 @@ public class Swerve extends SubsystemBase {
         }
         if (!timedOut) {
             resetGyro();
+        }
+        else {
+            System.out.println("Gyro calibration timed out!");
         }
     }
 
