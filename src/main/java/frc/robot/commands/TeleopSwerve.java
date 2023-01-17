@@ -3,6 +3,7 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -19,11 +20,12 @@ public class TeleopSwerve extends CommandBase {
     private int translationAxis;
     private int strafeAxis;
     private int rotationAxis;
+    private SlewRateLimiter slewRateLimiter;
 
     /**
      * Driver control
      */
-    public TeleopSwerve(Swerve s_Swerve, Joystick controller, int translationAxis, int strafeAxis, int rotationAxis, boolean fieldRelative, boolean openLoop) {
+    public TeleopSwerve(Swerve s_Swerve, Joystick controller, int translationAxis, int strafeAxis, int rotationAxis, boolean fieldRelative, boolean openLoop, double rateLimit) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -33,13 +35,15 @@ public class TeleopSwerve extends CommandBase {
         this.rotationAxis = rotationAxis;
         this.fieldRelative = fieldRelative;
         this.openLoop = openLoop;
+        this.slewRateLimiter = new SlewRateLimiter(rateLimit);
     }
 
     @Override
     public void execute() {
-        double yAxis = -controller.getRawAxis(translationAxis);
-        double xAxis = -controller.getRawAxis(strafeAxis);
-        double rAxis = -controller.getRawAxis(rotationAxis);
+
+        double yAxis = slewRateLimiter.calculate(-controller.getRawAxis(translationAxis));
+        double xAxis = slewRateLimiter.calculate(-controller.getRawAxis(strafeAxis));
+        double rAxis = slewRateLimiter.calculate(-controller.getRawAxis(rotationAxis));
         
         /* Deadbands */
         yAxis = (Math.abs(yAxis) < Constants.stickDeadband) ? 0 : yAxis;
