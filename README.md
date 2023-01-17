@@ -1,5 +1,4 @@
-# FRC Team 4817 - One Degree North </br>
-**Charged Up Main Repo** </br>
+# FRC Team 4817 Charged Up Main Repo*</br>
 This code was made using [364's BaseFalconSwerve template](https://github.com/Team364/BaseFalconSwerve). Temporarily, the original README from that repo is below this text.</br>
 
 **Setting Constants**
