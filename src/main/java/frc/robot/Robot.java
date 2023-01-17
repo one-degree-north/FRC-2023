@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_robotContainer.s_Swerve.calibrateAndResetGyro();
   }
 
   /**
@@ -61,9 +60,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    m_robotContainer.s_Swerve.resetModulesToAbsolute();
-    m_robotContainer.s_Swerve.resetGyro();
-
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -84,8 +80,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.s_Swerve.resetModulesToAbsolute();
-    m_robotContainer.s_Swerve.zeroGyro();
   }
 
   /** This function is called periodically during operator control. */
@@ -96,7 +90,6 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    m_robotContainer.s_Swerve.resetModulesToAbsolute();
   }
 
   /** This function is called periodically during test mode. */
