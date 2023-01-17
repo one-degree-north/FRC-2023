@@ -1,6 +1,6 @@
-# BaseFalconSwerve </br>
-**Basic Swerve Code for a Swerve Module using Falcon Motors, a CTRE CANCoder, and a CTRE Pigeon Gyro** </br>
-This code was designed with SDS MK3 style modules in mind, but should be easily adaptable to other styles of modules.</br>
+# FRC Team 4817 - One Degree North </br>
+**Charged Up Main Repo** </br>
+This code was made using [364's BaseFalconSwerve template](https://github.com/Team364/BaseFalconSwerve). Temporarily, the original README from that repo is below this text.</br>
 
 **Setting Constants**
 ----
