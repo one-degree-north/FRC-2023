@@ -14,8 +14,8 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
     public static final double stickDeadband = 0.1;
 
-    public static final class LimelightConstants {
-        public static final String cameraName = "OV5647";
+    public static final class VisionConstants {
+        public static final String cameraName = "OV5647"; // From PhotonVision
 
         public static final Transform3d robotToCam =
                 new Transform3d(
@@ -40,7 +40,7 @@ public final class Constants {
         public static final double closedLoopRamp = 0.0;
 
         public static final double driveGearRatio = (6.55 / 1.0); // 6.75:1
-        public static final double angleGearRatio = 1/((14.0 / 72.0) * (12.0 / 24.0)); // 6:1
+        public static final double angleGearRatio = (72.0 / 14.0) * (24.0 / 12.0); // Mystery gear ratio... 72/7:1 (WYSI)
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
                 new Translation2d(wheelBase / 2.0, trackWidth / 2.0),

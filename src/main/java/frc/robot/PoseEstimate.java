@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.TimeSyncEventData;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.VisionConstants;
 public class PoseEstimate {
 
     public PhotonCamera limeLight;
@@ -27,10 +27,10 @@ public class PoseEstimate {
         AprilTagFieldLayout apriltagLayout;
         try {
             apriltagLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-            limeLight = new PhotonCamera(LimelightConstants.cameraName);
+            limeLight = new PhotonCamera(VisionConstants.cameraName);
 
             var camList = new ArrayList<Pair<PhotonCamera, Transform3d>>();
-            camList.add(new Pair<PhotonCamera, Transform3d>(limeLight, LimelightConstants.robotToCam));
+            camList.add(new Pair<PhotonCamera, Transform3d>(limeLight, VisionConstants.robotToCam));
     
             robotPoseEstimator = new RobotPoseEstimator(apriltagLayout, PoseStrategy.LOWEST_AMBIGUITY, camList);
         } catch (IOException e) {
@@ -52,7 +52,6 @@ public class PoseEstimate {
         if (result.isPresent()) {
             // System.out.println("Latency: " + result.get().getSecond());
             double timestamp = (currentTime - (result.get().getSecond() / 1000));
-            // System.out.println(timestamp);
             return new Pair<Pose3d, Double>(
                     result.get().getFirst(), timestamp);
         } else {

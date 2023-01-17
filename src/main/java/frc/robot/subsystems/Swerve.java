@@ -4,17 +4,23 @@ import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
 import frc.robot.Constants;
-
+import frc.robot.PoseEstimate;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,8 +28,13 @@ public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public AHRS gyro;
+    public PoseEstimate poseEstimateHelper;
+    private final SwerveDrivePoseEstimator poseEstimator;
+    private Field2d field2d;
 
     public Swerve() {
+        poseEstimateHelper = new PoseEstimate();
+        field2d = new Field2d();
         gyro = new AHRS(SPI.Port.kMXP);
 
         mSwerveMods = new SwerveModule[] {
@@ -34,10 +45,14 @@ public class Swerve extends SubsystemBase {
         };
         
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getPositions());
+        poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), getPositions(), swerveOdometry.getPoseMeters());
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.3,0.3,0.3));
 
         for(SwerveModule mod : mSwerveMods){
             System.out.println("CANcoder on Module " + mod.moduleNumber + " took " + mod.CANcoderInitTime + " ms to be ready.");
         }
+
+        SmartDashboard.putData(field2d);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -70,12 +85,25 @@ public class Swerve extends SubsystemBase {
         }
     }    
 
+    public void setRobotPose2d(Pose2d pose2d) {
+        field2d.setRobotPose(pose2d);
+    }
+
+    public void setFieldTrajectory(String name, Trajectory traj) {
+        field2d.getObject(name).setTrajectory(traj);
+    }
+
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return poseEstimator.getEstimatedPosition();
     }
 
     public void resetOdometry(Pose2d pose) {
         swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
+    }
+
+    public void resetOdometryWithNewRotation(Pose2d pose, Rotation2d initalRotation) {
+        Pose2d newPose2d = new Pose2d(pose.getTranslation(), initalRotation);
+        swerveOdometry.resetPosition(getYaw(), getPositions(), newPose2d);
     }
 
     public SwerveModuleState[] getStates(){
@@ -141,4 +169,23 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
     }
+
+    public void updateOdometry() {
+        poseEstimator.update(getYaw(), getPositions());
+        field2d.getObject("Odometry").setPose(swerveOdometry.getPoseMeters());
+
+        // Also apply vision measurements. We use 0.3 seconds in the past as an example
+        // -- on
+        // a real robot, this must be calculated based either on latency or timestamps.
+        Pair<Pose3d, Double> result =
+                poseEstimateHelper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+        var camPose = result.getFirst();
+        var camPoseObsTime = result.getSecond();
+        if (camPose != null) {
+                poseEstimator.addVisionMeasurement(camPose.toPose2d(), camPoseObsTime);
+                field2d.getObject("Vision position").setPose(camPose.toPose2d());
+        }
+        field2d.setRobotPose(getPose());
+    }
+
 }
