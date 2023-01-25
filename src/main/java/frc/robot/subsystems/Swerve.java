@@ -36,7 +36,6 @@ public class Swerve extends SubsystemBase {
         poseEstimateHelper = new PoseEstimate();
         field2d = new Field2d();
         gyro = new AHRS(SPI.Port.kMXP);
-        calibrateAndResetGyro();
 
         mSwerveMods = new SwerveModule[] {
             new SwerveModule(0, Constants.Swerve.Mod0.constants),
@@ -44,9 +43,6 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(2, Constants.Swerve.Mod2.constants),
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
-
-        Timer.delay(1.0);
-        resetModulesToAbsolute();
         
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getPositions());
         poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getYaw(), getPositions(), swerveOdometry.getPoseMeters());
@@ -172,6 +168,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
+        updateOdometry();
     }
 
     public void updateOdometry() {
