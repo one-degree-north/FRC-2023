@@ -15,11 +15,12 @@ public final class Constants {
     public static final double stickDeadband = 0.1;
 
     public static final class VisionConstants {
-        public static final String cameraName = "OV5647"; // From PhotonVision
+        public static final String cameraName = "OV5647"; // Camera name from PhotonVision
 
         public static final Transform3d robotToCam =
                 new Transform3d(
-                        new Translation3d(0, 0.245, 0), // Camera offset in meters - TODO
+                        new Translation3d(0, 0.0, 0.0), // Camera offset in meters - TODO
+                        // X should be forward/back and Z should be height
                         new Rotation3d(
                                 0, 0,
                                 0));
@@ -52,12 +53,12 @@ public final class Constants {
         public static final int angleContinuousCurrentLimit = 25;
         public static final int anglePeakCurrentLimit = 40;
         public static final double anglePeakCurrentDuration = 0.1;
-        public static final boolean angleEnableCurrentLimit = false;
+        public static final boolean angleEnableCurrentLimit = true; // COULD CAUSE ERRORS
 
         public static final int driveContinuousCurrentLimit = 35;
         public static final int drivePeakCurrentLimit = 60;
         public static final double drivePeakCurrentDuration = 0.1;
-        public static final boolean driveEnableCurrentLimit = false;
+        public static final boolean driveEnableCurrentLimit = true; // COULD CAUSE ERRORS
 
         /* Angle Motor PID Values */
         public static final double angleKP = 0.3;
@@ -137,12 +138,12 @@ public final class Constants {
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecond = 3 * Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = 3 * Math.PI;
     
         public static final double kPXController = 1;
         public static final double kPYController = 1;
-        public static final double kPThetaController = 1;
+        public static final double kPThetaController = 1.3;
     
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
