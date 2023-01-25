@@ -27,7 +27,7 @@ public final class Constants {
     }
 
 
-    public static final class Swerve {
+    public static final class SwerveConstants {
 
         public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
 
