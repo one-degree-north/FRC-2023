@@ -41,9 +41,9 @@ public class TeleopSwerve extends CommandBase {
     @Override
     public void execute() {
 
-        double yAxis = slewRateLimiter.calculate(-controller.getRawAxis(translationAxis));
-        double xAxis = slewRateLimiter.calculate(-controller.getRawAxis(strafeAxis));
-        double rAxis = slewRateLimiter.calculate(-controller.getRawAxis(rotationAxis));
+        double yAxis = -controller.getRawAxis(translationAxis);
+        double xAxis = -controller.getRawAxis(strafeAxis);
+        double rAxis = -controller.getRawAxis(rotationAxis);
         
         /* Deadbands */
         yAxis = (Math.abs(yAxis) < Constants.stickDeadband) ? 0 : yAxis;
