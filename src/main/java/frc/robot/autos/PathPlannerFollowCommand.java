@@ -19,6 +19,7 @@ import frc.robot.subsystems.*;
 public class PathPlannerFollowCommand extends SequentialCommandGroup {
 
   public PathPlannerFollowCommand(Swerve swerve, String pathName) {
+    //Exclude ".path" from pathName
     PathPlannerTrajectory trajectory = PathPlanner.loadPath(pathName, AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared);
     PPSwerveControllerCommand swerveControllerCommand = new PPSwerveControllerCommand(
