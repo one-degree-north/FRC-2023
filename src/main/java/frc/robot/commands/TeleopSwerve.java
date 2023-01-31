@@ -20,7 +20,8 @@ public class TeleopSwerve extends CommandBase {
     private int translationAxis;
     private int strafeAxis;
     private int rotationAxis;
-    private SlewRateLimiter slewRateLimiter;
+    private SlewRateLimiter slewRateLimiterX;
+    private SlewRateLimiter slewRateLimiterY;
 
     /**
      * Driver control
@@ -35,14 +36,15 @@ public class TeleopSwerve extends CommandBase {
         this.rotationAxis = rotationAxis;
         this.fieldRelative = fieldRelative;
         this.openLoop = openLoop;
-        this.slewRateLimiter = new SlewRateLimiter(rateLimit);
+        this.slewRateLimiterX = new SlewRateLimiter(rateLimit);
+        this.slewRateLimiterY = new SlewRateLimiter(rateLimit);
     }
 
     @Override
     public void execute() {
 
-        double yAxis = -controller.getRawAxis(translationAxis);
-        double xAxis = -controller.getRawAxis(strafeAxis);
+        double yAxis = slewRateLimiterX.calculate(-controller.getRawAxis(translationAxis));
+        double xAxis = slewRateLimiterY.calculate(-controller.getRawAxis(strafeAxis));
         double rAxis = -controller.getRawAxis(rotationAxis);
         
         /* Deadbands */

@@ -26,7 +26,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   /* Controllers */
   private final Joystick driver = new Joystick(0);
-  private final double rateLimit = 0.5;
+  private final double rateLimit = 2;
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -68,6 +68,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new PathPlannerFollowCommand(s_Swerve, "CHANGEME");
+    return new PathPlannerFollowCommand(s_Swerve, "New Path");
   }
 }

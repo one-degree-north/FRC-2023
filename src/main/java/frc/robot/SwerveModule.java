@@ -97,6 +97,10 @@ public class SwerveModule {
 
     private void configAngleMotor(){
         mAngleMotor.configFactoryDefault();
+        mAngleMotor.configFactoryDefault();
+        mAngleMotor.configFactoryDefault();
+        mAngleMotor.configFactoryDefault();
+
         mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleMotor.setInverted(Constants.SwerveConstants.angleMotorInvert);
         mAngleMotor.setNeutralMode(Constants.SwerveConstants.angleNeutralMode);

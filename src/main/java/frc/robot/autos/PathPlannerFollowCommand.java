@@ -24,7 +24,7 @@ public class PathPlannerFollowCommand extends SequentialCommandGroup {
         AutoConstants.kMaxAccelerationMetersPerSecondSquared);
     PPSwerveControllerCommand swerveControllerCommand = new PPSwerveControllerCommand(
         trajectory,
-        swerve::getPose,
+        swerve::getOdometryPose,
         SwerveConstants.swerveKinematics,
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
@@ -33,7 +33,7 @@ public class PathPlannerFollowCommand extends SequentialCommandGroup {
         false,
         swerve);
 
-    swerve.setFieldTrajectory("Trajectory", trajectory);
+    // swerve.setFieldTrajectory("Trajectory", trajectory);
 
     // change the lambda to an external command or state it outside the runOnce function
     addCommands(new InstantCommand(() -> {
