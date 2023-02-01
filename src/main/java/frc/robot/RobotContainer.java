@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -27,6 +30,8 @@ public class RobotContainer {
   /* Controllers */
   private final Joystick driver = new Joystick(0);
   private final double rateLimit = 2;
+  boolean fieldRelative = true;
+  boolean openLoop = true;
 
   /* Drive Controls */
   private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -38,13 +43,17 @@ public class RobotContainer {
 
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
+  SendableChooser<String> m_chooser = new SendableChooser<>();
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    boolean fieldRelative = true;
-    boolean openLoop = true;
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver, translationAxis, strafeAxis, rotationAxis, fieldRelative, openLoop, rateLimit));
+
+    m_chooser.addOption("New Path", "New Path");
+
+    // ShuffleBoard auto selection options
+    SmartDashboard.putData("Auto choices", m_chooser);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -68,6 +77,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new PathPlannerFollowCommand(s_Swerve, "New Path");
+    return new PathPlannerFollowCommand(s_Swerve, m_chooser.getSelected());
   }
 }
