@@ -51,12 +51,12 @@ public final class Constants {
         public static final int angleContinuousCurrentLimit = 25;
         public static final int anglePeakCurrentLimit = 40;
         public static final double anglePeakCurrentDuration = 0.1;
-        public static final boolean angleEnableCurrentLimit = true; // COULD CAUSE ERRORS
+        public static final boolean angleEnableCurrentLimit = true; 
 
         public static final int driveContinuousCurrentLimit = 35;
         public static final int drivePeakCurrentLimit = 60;
         public static final double drivePeakCurrentDuration = 0.1;
-        public static final boolean driveEnableCurrentLimit = true; // COULD CAUSE ERRORS
+        public static final boolean driveEnableCurrentLimit = true; 
 
         /* Angle Motor PID Values */
         public static final double angleKP = 0.2;
@@ -134,14 +134,16 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = 0.45;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI/2;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI/2;
+
+        // Be very when increasing max speed
+        public static final double kMaxSpeedMetersPerSecond = 0.8;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.4;
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*5/4;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*5/4;
     
-        public static final double kPXController = 0.35;
-        public static final double kPYController = 0.35;
-        public static final double kPThetaController = 0.25;
+        public static final double kPXController = 0.6;
+        public static final double kPYController = 0.6;
+        public static final double kPThetaController = 0.8;
     
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
