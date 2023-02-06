@@ -26,12 +26,20 @@ public final class Constants {
                                 0));
     }
 
+    public static final class ArmConstants {
+        public static final int armMotorID = 0;
+        public static final int armEncoderID = 0;
+        public static final boolean motorInvert = false;
+        public static final boolean canCoderInvert = false;
+
+    }
+
 
     public static final class SwerveConstants {
 
         /* Drivetrain Constants */
-        public static final double trackWidth = 0.635;
-        public static final double wheelBase = 0.635;
+        public static final double trackWidth = 0.64;
+        public static final double wheelBase = 0.64;
         public static final double wheelDiameter = Units.inchesToMeters(4.0);
         public static final double wheelCircumference = wheelDiameter * Math.PI;
 

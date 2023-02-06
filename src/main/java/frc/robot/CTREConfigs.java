@@ -12,11 +12,17 @@ public final class CTREConfigs {
     public TalonFXConfiguration swerveDriveFXConfig;
     public CANCoderConfiguration swerveCanCoderConfig;
 
+    public TalonFXConfiguration armMotorConfig;
+    public CANCoderConfiguration armCanCoderConfig;
+
 
     public CTREConfigs(){
         swerveAngleFXConfig = new TalonFXConfiguration();
         swerveDriveFXConfig = new TalonFXConfiguration();
         swerveCanCoderConfig = new CANCoderConfiguration();
+
+        armMotorConfig = new TalonFXConfiguration();
+        armCanCoderConfig = new CANCoderConfiguration();
 
         /* Swerve Angle Motor Configurations */
         SupplyCurrentLimitConfiguration angleSupplyLimit = new SupplyCurrentLimitConfiguration(
@@ -55,6 +61,23 @@ public final class CTREConfigs {
         swerveCanCoderConfig.sensorDirection = Constants.SwerveConstants.canCoderInvert;
         swerveCanCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
         swerveCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
+
+        /* Arm Motor Configurations */
+
+        // SupplyCurrentLimitConfiguration armSupplyLimit = new SupplyCurrentLimitConfiguration(
+        //     Constants.ArmConstants.angleEnableCurrentLimit, 
+        //     Constants.ArmConstants.angleContinuousCurrentLimit, 
+        //     Constants.ArmConstants.anglePeakCurrentLimit, 
+        //     Constants.ArmConstants.anglePeakCurrentDuration);
+        // armMotorConfig.supplyCurrLimit = armSupplyLimit;
+
+        armMotorConfig.initializationStrategy = SensorInitializationStrategy.BootToZero;
+        
+        /* Arm CANCoder Configuration */
+        armCanCoderConfig.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
+        armCanCoderConfig.sensorDirection = Constants.ArmConstants.canCoderInvert;
+        armCanCoderConfig.initializationStrategy = SensorInitializationStrategy.BootToAbsolutePosition;
+        armCanCoderConfig.sensorTimeBase = SensorTimeBase.PerSecond;
 
         
 

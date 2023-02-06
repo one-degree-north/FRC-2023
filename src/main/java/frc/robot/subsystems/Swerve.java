@@ -142,6 +142,9 @@ public class Swerve extends SubsystemBase {
             mod.resetToAbsolute();
         }
     }
+    public void resetPose(Pose2d pose) {
+        poseEstimator.resetPosition(getYaw(), getPositions(), pose);
+    }
     
     public void calibrateAndResetGyro() {
         gyro.calibrate();
