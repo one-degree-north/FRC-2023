@@ -23,15 +23,38 @@ public final class Constants {
                         // X should be forward/back and Z should be height
                         new Rotation3d(
                                 0, 0,
-                                0));
+                                0)); // YPR offset for limelight
     }
 
     public static final class ArmConstants {
+        // CAN IDs
         public static final int armMotorID = 0;
         public static final int armEncoderID = 0;
+
+        // Inverts
         public static final boolean motorInvert = false;
         public static final boolean canCoderInvert = false;
 
+        // Offset in degrees
+        public static final double angleOffset = 0;
+
+        // Gear ratio
+        public static final double gearRatio = 0;
+
+        // Profiled PID controller constants
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+
+        // Arm feedforward constants
+        public static final double kS = 0;
+        public static final double kG = 0;
+        public static final double kV = 0;
+        public static final double kA = 0;
+
+        // Constraints for motion profiling
+        public static final double velConstraint = 0;
+        public static final double accelConstraint = 0;
     }
 
 

@@ -20,10 +20,10 @@ public class Arm extends SubsystemBase {
   private CANCoder m_encoder;
 
   // Encoder angle offset
-  private double angleOffset;
+  private double m_angleOffset;
 
   // Gear ratio of arm
-  private double gearRatio;
+  private double m_gearRatio;
 
   private ProfiledPIDController m_pidController;
   private ArmFeedforward m_feedForwardController;
@@ -47,6 +47,13 @@ public class Arm extends SubsystemBase {
     new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
 
     this.m_feedForwardController = new ArmFeedforward(ks, kg, kv, ka);
+
+    this.m_angleOffset = ArmConstants.angleOffset;
+
+    this.m_gearRatio = ArmConstants.gearRatio;
+    
+    this.maxVelocity = ArmConstants.velConstraint;
+    this.maxAcceleration = ArmConstants.accelConstraint;
     
   }
 
@@ -62,11 +69,11 @@ public class Arm extends SubsystemBase {
   }
 
   public double getAbsoluteAngle() {
-    return Conversions.CANcoderToDegrees(m_encoder.getAbsolutePosition(), gearRatio);
+    return Conversions.CANcoderToDegrees(m_encoder.getAbsolutePosition(), m_gearRatio);
   }
 
   public double getAngle() {
-    return getAbsoluteAngle()-angleOffset;
+    return getAbsoluteAngle()-m_angleOffset;
   }
 
   public void setGoal(double angle) {
