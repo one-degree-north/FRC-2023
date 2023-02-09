@@ -28,33 +28,41 @@ public final class Constants {
 
     public static final class ArmConstants {
         // CAN IDs
-        public static final int armMotorID = 0;
-        public static final int armEncoderID = 0;
+        public static final int armMotorID = 30;
+        public static final int armSlaveID = 31;
+        public static final int armEncoderID = 32;
 
         // Inverts
         public static final boolean motorInvert = false;
+        public static final boolean slaveInvert = true;
         public static final boolean canCoderInvert = false;
 
         // Offset in degrees
-        public static final double angleOffset = 0;
+        public static final double angleOffset = 91.5;
 
         // Gear ratio
-        public static final double gearRatio = 0;
+        public static final double gearRatio = (48/22)*100;
 
         // Profiled PID controller constants
-        public static final double kP = 0;
+        public static final double kP = 0.8;
         public static final double kI = 0;
         public static final double kD = 0;
 
         // Arm feedforward constants
         public static final double kS = 0;
-        public static final double kG = 0;
+        public static final double kG = 1;
         public static final double kV = 0;
         public static final double kA = 0;
 
         // Constraints for motion profiling
-        public static final double velConstraint = 0;
-        public static final double accelConstraint = 0;
+        public static final double velConstraint = 70;
+        public static final double accelConstraint = 45;
+    }
+
+    public static final class IntakeConstants {
+        public static final int intakeID = 0; 
+        public static final double speed = 0;
+        public static final boolean inverted = false;
     }
 
 

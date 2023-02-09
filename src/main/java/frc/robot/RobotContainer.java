@@ -40,9 +40,13 @@ public class RobotContainer {
 
   /* Driver Buttons */
   private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+  private final JoystickButton setArm = new JoystickButton(driver, XboxController.Button.kX.value);
+  private final JoystickButton zeroArm = new JoystickButton(driver, XboxController.Button.kA.value);
+
 
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
+  public final Arm s_Arm = new Arm();
   SendableChooser<String> m_chooser = new SendableChooser<>();
 
 
@@ -68,6 +72,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    setArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(0)));
+    zeroArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(58)));
+
   }
 
   /**
