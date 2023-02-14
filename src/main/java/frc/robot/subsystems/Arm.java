@@ -40,14 +40,30 @@ public class Arm extends SubsystemBase {
   private double maxVelocity, maxAcceleration;
 
   public double CANcoderInitTime = 0.0;
+  
+  private final double LOWLIMIT = -180;
+
+  private final double UPLIMIT = 180;
+
+  private final double TOLERANCE = 5;
 
   /** Creates a new Arm. */
   public Arm() {
     this.m_armMotor = new WPI_TalonFX(ArmConstants.armMotorID);
     this.m_armSlave = new WPI_TalonFX(ArmConstants.armSlaveID);
-    configArmMotor();
-
     this.m_encoder = new CANCoder(ArmConstants.armEncoderID);
+
+    this.kp = ArmConstants.kP;
+    this.ki = ArmConstants.kI;
+    this.kd = ArmConstants.kD;
+
+    this.ks = ArmConstants.kS;
+    this.kg = ArmConstants.kG;
+    this.kv = ArmConstants.kV;
+    this.ka = ArmConstants.kA;
+
+    this.maxVelocity = ArmConstants.velConstraint; // Degrees per second
+    this.maxAcceleration = ArmConstants.accelConstraint; // Degrees per second squared
 
     this.m_pidController = new ProfiledPIDController(kp, ki, kd, 
     new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration));
@@ -56,16 +72,15 @@ public class Arm extends SubsystemBase {
 
     this.m_angleOffset = ArmConstants.angleOffset; // Degrees
 
-    this.maxVelocity = ArmConstants.velConstraint; // Degrees per second
-    this.maxAcceleration = ArmConstants.accelConstraint; // Degrees per second squared
+    configArmMotor();
     configArmCanCoder();
     resetToAbsolute();
     m_armSlave.follow(m_armMotor);
     m_pidController.disableContinuousInput();
 
+    m_pidController.setTolerance(TOLERANCE);
 
-    // m_pidController.setTolerance(5, 5);
-
+    setCurrentPosToGoal();
   }
 
   public void configArmMotor() {
@@ -122,7 +137,11 @@ public class Arm extends SubsystemBase {
   }
 
   public void setGoal(double angle) {
-    m_pidController.setGoal(angle);
+    if (angle >= LOWLIMIT && angle <= UPLIMIT) m_pidController.setGoal(angle);
+  }
+
+  public void setCurrentPosToGoal() {
+    m_pidController.setGoal(getPosition());
   }
 
   public double getGoal() {
@@ -145,17 +164,21 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Left", Conversions.falconToDegrees(m_armSlave.getSelectedSensorPosition(), ArmConstants.gearRatio));
     // SmartDashboard.putNumber("Current Arm Goal", getGoal());
     SmartDashboard.putNumber("Current Arm Setpoint", m_pidController.getSetpoint().position);
+    SmartDashboard.putBoolean("Current Arm Setpoint", atGoal());
+
 
 
     m_armMotor.setVoltage(
       /** PID Controller calculates output based on 
       the current position and the goal **/
-      m_pidController.calculate(getPosition(), getGoal()) 
+      m_pidController.calculate(getPosition(), getGoal())
       /** Feedforward uses setpoints calculated by 
       motion profiling **/
-    + m_feedForwardController.calculate(
+    +
+     m_feedForwardController.calculate(
       m_pidController.getSetpoint().position, 
-    m_pidController.getSetpoint().velocity));
+    m_pidController.getSetpoint().velocity)
+    );
 
     // m_armMotor.setVoltage(
     //   /** PID Controller calculates output based on 

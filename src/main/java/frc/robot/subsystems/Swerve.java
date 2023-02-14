@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
+import frc.robot.autos.TrajectoryFollowCommand;
 import frc.robot.Constants;
 import frc.robot.PoseEstimate;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
@@ -199,6 +201,12 @@ public class Swerve extends SubsystemBase {
                 field2d.getObject("Vision position").setPose(camPose.toPose2d());
         }
         field2d.setRobotPose(getPose());
+    }
+
+    // Use odometryOnly mode if target pose is relative to startingPose instead of the entire field
+    public Command getGoToPoseCommand(boolean odometryOnly, Pose2d targetPose) {
+        if (!odometryOnly) return new TrajectoryFollowCommand(this, getPose(), null, targetPose, false);
+        else return new TrajectoryFollowCommand(this, new Pose2d(0, 0, getYaw()), null, targetPose, false);
     }
 
 }

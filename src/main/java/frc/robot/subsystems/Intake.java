@@ -20,7 +20,7 @@ public class Intake extends SubsystemBase {
     this.m_motor = new CANSparkMax(IntakeConstants.intakeID, MotorType.kBrushless);
     configure();
 
-    this.speed = IntakeConstants.speed;
+    this.speed = IntakeConstants.speed * -1;
   }
   public void configure() {
     m_motor.setInverted(IntakeConstants.inverted);

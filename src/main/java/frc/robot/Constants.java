@@ -38,30 +38,30 @@ public final class Constants {
         public static final boolean canCoderInvert = false;
 
         // Offset in degrees
-        public static final double angleOffset = 91.5;
+        public static final double angleOffset = -43.287+254;
 
         // Gear ratio
         public static final double gearRatio = (48/22)*100;
 
         // Profiled PID controller constants
-        public static final double kP = 0.8;
+        public static final double kP = 0.1113;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.05831;
 
         // Arm feedforward constants
-        public static final double kS = 0;
-        public static final double kG = 1;
-        public static final double kV = 0;
-        public static final double kA = 0;
+        public static final double kS = 0.12072;
+        public static final double kG = 0.25613;
+        public static final double kV = 0.066196;
+        public static final double kA = 0.0029598;
 
         // Constraints for motion profiling
-        public static final double velConstraint = 70;
-        public static final double accelConstraint = 45;
+        public static final double velConstraint = 90;
+        public static final double accelConstraint = 100;
     }
 
     public static final class IntakeConstants {
-        public static final int intakeID = 0; 
-        public static final double speed = 0;
+        public static final int intakeID = 40; 
+        public static final double speed = 0.4;
         public static final boolean inverted = false;
     }
 
@@ -77,7 +77,7 @@ public final class Constants {
         public static final double openLoopRamp = 0.25;
         public static final double closedLoopRamp = 0.0;
 
-        public static final double driveGearRatio = (6.55 / 1.0); // 6.75:1
+        public static final double driveGearRatio = (6.55 / 1.0); // 6.55:1 ?
         public static final double angleGearRatio = (72.0 / 14.0) * (24.0 / 12.0); // Mystery gear ratio... 72/7:1 (WYSI)
 
         public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(

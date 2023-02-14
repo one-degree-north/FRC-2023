@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     m_robotContainer.s_Swerve.resetModulesToAbsolute();
+    m_robotContainer.s_Arm.resetToAbsolute();
   }
 
   /**
@@ -68,6 +69,7 @@ public class Robot extends TimedRobot {
     }
     m_robotContainer.s_Swerve.resetModulesToAbsolute();
     m_robotContainer.s_Arm.resetToAbsolute();
+    m_robotContainer.s_Arm.setCurrentPosToGoal();
   }
 
   /** This function is called periodically during autonomous. */
@@ -84,11 +86,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
       m_robotContainer.s_Swerve.resetModulesToAbsolute();
-      m_robotContainer.s_Arm.resetToAbsolute();
-
 
       // TODO: Find better gyro resetting times
       m_robotContainer.s_Swerve.zeroGyro();
+
+      m_robotContainer.s_Arm.resetToAbsolute();
+      m_robotContainer.s_Arm.setCurrentPosToGoal();
 
     }
   }
