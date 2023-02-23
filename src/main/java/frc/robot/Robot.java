@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
       m_robotContainer.s_Swerve.resetModulesToAbsolute();
 
-      // TODO: Find better gyro resetting times
+      // TO DO: Find better gyro resetting times
       m_robotContainer.s_Swerve.zeroGyro();
 
       m_robotContainer.s_Arm.resetToAbsolute();
