@@ -15,10 +15,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -44,27 +45,34 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
 
   /* Driver Buttons */
-  private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-  private final JoystickButton setArm = new JoystickButton(driver, XboxController.Button.kX.value);
-  private final JoystickButton zeroArm = new JoystickButton(driver, XboxController.Button.kA.value);
-  private final JoystickButton backwardsArm = new JoystickButton(driver, XboxController.Button.kB.value);
-  private final JoystickButton intakeIn = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
-  private final JoystickButton intakeOut = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final Trigger zeroGyro = new Trigger(() -> driver.getPOV() == 0);
+  private final Trigger zeroArm = new Trigger(() -> driver.getPOV() == 180);
+  private final Trigger intake = new Trigger(() -> driver.getPOV() == 90);
+  private final Trigger score = new Trigger(() -> driver.getPOV() == 270);
+  private final JoystickButton armHighScore = new JoystickButton(driver, XboxController.Button.kY.value);
+  private final JoystickButton armLowScore = new JoystickButton(driver, XboxController.Button.kB.value);
+  private final JoystickButton armHighIntake = new JoystickButton(driver, XboxController.Button.kX.value);
+  private final JoystickButton armLowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
+  private final Trigger intakeIn = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton intakeOut = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
+  
+
 
   /* Subsystems */
   public final Swerve s_Swerve = new Swerve();
   public final Arm s_Arm = new Arm();
   public final Intake s_Intake = new Intake();
+  public final PoseEstimate position = new PoseEstimate();
   SendableChooser<String> m_chooser = new SendableChooser<>();
 
   /* Command Stuff */
 
-  private final double DOCKED_POSITION = -40;
-  private final double INTAKE_HIGH = 0; //TODO
-  private final double INTAKE_LOW = -50;
+  private final double DOCKED_POSITION = -50;
+  private final double INTAKE_HIGH = 25; //TO DO
+  private final double INTAKE_LOW = -35;
 
-  private final double OUTTAKE_MID = 0; // TODO
-  private final double OUTTAKE_LOW = 0; // TODO
+  private final double OUTTAKE_MID = 195; // TO DO
+  private final double OUTTAKE_LOW = 205; // TO DO
 
 
 
@@ -85,15 +93,18 @@ public class RobotContainer {
 
   private Command getIntakeCommand(double seconds, boolean isIntaking) {
     if (isIntaking) 
-    return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), 
-    new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.intake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()-15))), 
+      new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
 
     else
-    return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.outtake()), 
-    new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15))), 
+      new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+
+    
   }
 
-  private Command getScoreGamePieceCommand(double xPose, double cutoffXCord, double gamePieceAngle) {
+  private Command getScoreGamePieceCommand(double xPose, double gamePieceAngle) {
+    double cutoffXCord = 2.91;
     if (s_Swerve.getPose().getX() < cutoffXCord)
     return new SequentialCommandGroup(s_Swerve.getGoToPoseCommand(false, 
     new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getTranslation().getY()), 
@@ -126,9 +137,15 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-    setArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(0)));
-    zeroArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_LOW)));
-    backwardsArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(180)));
+    zeroArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(DOCKED_POSITION)));
+
+    intake.onTrue(getIntakeCommand(2, true));
+    score.onTrue(getIntakeCommand(2, false));
+
+    armHighScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_MID)));
+    armLowScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_LOW)));
+    armHighIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_HIGH)));
+    armLowIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_LOW)));
 
     intakeIn.onTrue(new InstantCommand(() -> s_Intake.intake()));
     intakeIn.onFalse(new InstantCommand(() -> s_Intake.stop()));

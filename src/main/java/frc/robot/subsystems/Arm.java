@@ -168,17 +168,17 @@ public class Arm extends SubsystemBase {
 
 
 
-    // m_armMotor.setVoltage(
-    //   /** PID Controller calculates output based on 
-    //   the current position and the goal **/
-    //   m_pidController.calculate(getPosition(), getGoal())
-    //   /** Feedforward uses setpoints calculated by 
-    //   motion profiling **/
-    // +
-    //  m_feedForwardController.calculate(
-    //   m_pidController.getSetpoint().position, 
-    // m_pidController.getSetpoint().velocity)
-    // );
+    m_armMotor.setVoltage(
+      /** PID Controller calculates output based on 
+      the current position and the goal **/
+      m_pidController.calculate(getPosition(), getGoal())
+      /** Feedforward uses setpoints calculated by 
+      motion profiling **/
+    +
+     m_feedForwardController.calculate(
+      m_pidController.getSetpoint().position, 
+    m_pidController.getSetpoint().velocity)
+    );
 
     // m_armMotor.setVoltage(
     //   /** PID Controller calculates output based on 
