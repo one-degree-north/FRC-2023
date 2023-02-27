@@ -19,11 +19,12 @@ public final class Constants {
 
         public static final Transform3d robotToCam =
                 new Transform3d(
-                        new Translation3d(0.178, 0.0, 0.127), // Camera offset in meters - TO DO
+                        new Translation3d(0.178, 0.0, 0.127), // Camera offset in meters - TODO NOW
                         // X should be forward/back and Z should be height
                         new Rotation3d(
                                 0, 0,
-                                0)); // YPR offset for limelight
+                                Math.PI)); // YPR offset for limelight 
+                                // pi because facing backwards
     }
 
     public static final class ArmConstants {

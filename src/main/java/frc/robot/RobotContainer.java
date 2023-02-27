@@ -63,51 +63,52 @@ public class RobotContainer {
   public final Arm s_Arm = new Arm();
   public final Intake s_Intake = new Intake();
   public final PoseEstimate position = new PoseEstimate();
-  SendableChooser<String> m_chooser = new SendableChooser<>();
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /* Command Stuff */
 
-  private final double DOCKED_POSITION = -50;
+  // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
+  private final double DOCKED_POSITION = -32;
+
   private final double INTAKE_HIGH = 25; //Need to Check
-  private final double INTAKE_LOW = -32; 
+
+  // This position is as low to the floor as the intake can get within arm constraints. 
+  private final double INTAKE_LOW = -50; 
 
   private final double OUTTAKE_MID = 185; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.65; //Need to Check
-  private final double OUTTAKE_Far = 2.00; //Need to Check
+  private final double OUTTAKE_FAR = 2.00; //Need to Check
   private final double OUTTAKE_LOW = 220; //Need to double Check
 
-
-
-
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver, translationAxis, strafeAxis, rotationAxis, fieldRelative, openLoop, rateLimit));
-
-    m_chooser.addOption("New Path", "New Path");
-
-    // ShuffleBoard auto selection options
-    SmartDashboard.putData("Auto choices", m_chooser);
-
-    // Configure the button bindings
-    configureButtonBindings();
-  }
   // Commands
 
   private Command getIntakeCommand(double seconds, boolean isIntaking) {
-    
-    if (isIntaking && s_Arm.getPosition()<0 && s_Arm.getPosition()>-30){
-      return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.intake()), new InstantCommand(() -> s_Arm.setGoal((s_Arm.getGoal()-15)))), 
-      new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    if (isIntaking) {
+
+      if (s_Arm.getGoal()>-30 && s_Arm.getGoal() < 180) // Hardcoded limits for front intake AND shelf intake
+      return new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.intake()), // Start intaking
+        new ArmCommand(s_Arm, s_Arm.getGoal()-15), // Move intake downwards (waits for arm to reach goal)
+        new WaitCommand(seconds), // Wait for specified seconds
+        new InstantCommand(() -> s_Intake.stop()), // Stop intake
+        new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15)) // Move arm back to original goal
+        );
+      
+      else // Base case where current goal is outside of front intaking limits
+      return new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.intake()), 
+        new WaitCommand(seconds), 
+        new InstantCommand(() -> s_Intake.stop())
+        );
+
     }
-    else if(isIntaking){
-      return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
-    }
-    else if(!isIntaking && s_Arm.getPosition()>0 && s_Arm.getPosition()<210){
-      return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15))), 
-      new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
-    }
-    else{
-      return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+
+    else {
+      return new SequentialCommandGroup( // Only use base case for outtaking
+        new InstantCommand(() -> s_Intake.outtake()), 
+        new WaitCommand(seconds), 
+        new InstantCommand(() -> s_Intake.stop()));
+
     }
    
 
@@ -117,20 +118,29 @@ public class RobotContainer {
   
   private Command getScoreGamePieceCommand(double xPose, double gamePieceAngle) {
     double cutoffXCord = 2.91;
-    if (s_Swerve.getPose().getX() < cutoffXCord)
-    return new SequentialCommandGroup(s_Swerve.getGoToPoseCommand(false, 
-    new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), 
-    new Rotation2d(0))), 
-    new ArmCommand(s_Arm, gamePieceAngle),
-    getIntakeCommand(1.5, false),
-    new ArmCommand(s_Arm, DOCKED_POSITION)
+    if (s_Swerve.getPose().getX() < cutoffXCord && s_Swerve.getPose().getX() >= 0 && xPose < cutoffXCord && xPose >= 0) // For safety
+    return new SequentialCommandGroup(
+
+    // Go to position
+      s_Swerve.getGoToPoseCommand(false, // Uses PoseEstimator data (vision assisted)
+        new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), // Go to specified xPose 
+        new Rotation2d(0))), // Facing away from scoring nodes - back scoring
+
+      // IMPORTANT: THIS SHOULD BE HOVERING ABOVE THE NODE BY ABOUT 15 DEGREES
+      new ArmCommand(s_Arm, gamePieceAngle),
+
+      // Outtake Command with hardcoded time (TODO: check the appropiate number of seconds)
+      getIntakeCommand(1.5, false),
+
+      // Return to docked position
+      new ArmCommand(s_Arm, DOCKED_POSITION)
     );
 
     else return new InstantCommand();
   }
 
 
-  //WORK IN PROGRESS
+  //WORK IN PROGRESS (abandoned)
   // private Command getHighIntakeCommand(double distanceFromWall, double cutoffXCord, double intakingAngle) {
   //   if (s_Swerve.getPose().getX() < cutoffXCord)
   //   return new SequentialCommandGroup(s_Swerve.getGoToPoseCommand(true, new Pose2d(
@@ -140,14 +150,53 @@ public class RobotContainer {
   //   );
   // }
 
+
+  // "Close Side" means the side closest to the other alliance's loading zone, while "Far Side" means the side furthest.
+
+  // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
+
+  private Command GP2_C_CS = new SequentialCommandGroup( // 2 game piece with climb from close side
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
+
+    // TODO: TUNE INTAKE COMMAND SECONDS
+    getIntakeCommand(1.5, true),
+
+    new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
+
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score2ToChargingStation")
+  );
+
+
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
+    s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver, translationAxis, strafeAxis, rotationAxis, fieldRelative, openLoop, rateLimit));
+
+    // ADD ALL AUTONS HERE
+
+    // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
+    m_chooser.setDefaultOption("GP2C_CS", GP2_C_CS);
+
+    // ShuffleBoard auto selection options
+    SmartDashboard.putData("Auto choices", m_chooser);
+
+    // Configure the button bindings
+    configureButtonBindings();
+  }
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
-    /* Driver Buttons */
+    /* Driver Buttons - MANUAL CONTROL FOR TESTING */
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     zeroArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(DOCKED_POSITION)));
 
@@ -176,6 +225,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new PathPlannerFollowCommand(s_Swerve, m_chooser.getSelected());
+    return m_chooser.getSelected();
   }
 }
