@@ -41,9 +41,9 @@ public class Arm extends SubsystemBase {
 
   public double CANcoderInitTime = 0.0;
   
-  private final double LOWLIMIT = -180;
+  private final double LOWLIMIT = -90;
 
-  private final double UPLIMIT = 180;
+  private final double UPLIMIT = 270;
 
   private final double TOLERANCE = 5;
 
@@ -137,7 +137,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void setGoal(double angle) {
-    if (angle >= LOWLIMIT && angle <= UPLIMIT) m_pidController.setGoal(angle);
+    if (angle >= LOWLIMIT && angle <= UPLIMIT && Math.abs(getPosition() - angle) <= Math.abs(UPLIMIT-LOWLIMIT)) 
+    m_pidController.setGoal(angle);
   }
 
   public void setCurrentPosToGoal() {
@@ -171,7 +172,7 @@ public class Arm extends SubsystemBase {
     m_armMotor.setVoltage(
       /** PID Controller calculates output based on 
       the current position and the goal **/
-      m_pidController.calculate(getPosition(), getGoal())
+      m_pidController.calculate(getPosition())
       /** Feedforward uses setpoints calculated by 
       motion profiling **/
     +

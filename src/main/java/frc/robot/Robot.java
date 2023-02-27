@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     m_robotContainer.s_Swerve.resetModulesToAbsolute();
     m_robotContainer.s_Arm.resetToAbsolute();
+    m_robotContainer.s_Arm.setCurrentPosToGoal();
   }
 
   /**
