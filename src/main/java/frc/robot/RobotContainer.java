@@ -68,11 +68,13 @@ public class RobotContainer {
   /* Command Stuff */
 
   private final double DOCKED_POSITION = -50;
-  private final double INTAKE_HIGH = 25; //TO DO
-  private final double INTAKE_LOW = -35;
+  private final double INTAKE_HIGH = 25; //Need to Check
+  private final double INTAKE_LOW = -32; 
 
-  private final double OUTTAKE_MID = 195; // TO DO
-  private final double OUTTAKE_LOW = 205; // TO DO
+  private final double OUTTAKE_MID = 185; //Need to  double Check
+  private final double OUTTAKE_NEAR = 1.65; //Need to Check
+  private final double OUTTAKE_Far = 2.00; //Need to Check
+  private final double OUTTAKE_LOW = 220; //Need to double Check
 
 
 
@@ -92,17 +94,27 @@ public class RobotContainer {
   // Commands
 
   private Command getIntakeCommand(double seconds, boolean isIntaking) {
-    if (isIntaking) 
-    return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.intake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()-15))), 
+    
+    if (isIntaking && s_Arm.getPosition()<0 && s_Arm.getPosition()>-30){
+      return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.intake()), new InstantCommand(() -> s_Arm.setGoal((s_Arm.getGoal()-15)))), 
       new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
-
-    else
-    return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15))), 
+    }
+    else if(isIntaking){
+      return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    }
+    else if(!isIntaking && s_Arm.getPosition()>0 && s_Arm.getPosition()<210){
+      return new SequentialCommandGroup(new ParallelCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15))), 
       new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    }
+    else{
+      return new SequentialCommandGroup(new InstantCommand(() -> s_Intake.outtake()), new WaitCommand(seconds), new InstantCommand(() -> s_Intake.stop()));
+    }
+   
 
     
   }
 
+  
   private Command getScoreGamePieceCommand(double xPose, double gamePieceAngle) {
     double cutoffXCord = 2.91;
     if (s_Swerve.getPose().getX() < cutoffXCord)
