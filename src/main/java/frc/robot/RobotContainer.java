@@ -107,7 +107,7 @@ public class RobotContainer {
     double cutoffXCord = 2.91;
     if (s_Swerve.getPose().getX() < cutoffXCord)
     return new SequentialCommandGroup(s_Swerve.getGoToPoseCommand(false, 
-    new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getTranslation().getY()), 
+    new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), 
     new Rotation2d(0))), 
     new ArmCommand(s_Arm, gamePieceAngle),
     getIntakeCommand(1.5, false),
