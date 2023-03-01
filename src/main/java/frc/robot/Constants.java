@@ -19,7 +19,7 @@ public final class Constants {
 
         public static final Transform3d robotToCam =
                 new Transform3d(
-                        new Translation3d(0.178, 0.0, 0.127), // Camera offset in meters - TODO NOW
+                        new Translation3d(0.1905, 0.0, 0.889), // Camera offset in meters - TODO NOW
                         // X should be forward/back and Z should be height
                         new Rotation3d(
                                 0, 0,
@@ -176,8 +176,8 @@ public final class Constants {
     public static final class AutoConstants {
 
         // Be very when increasing max speed
-        public static final double kMaxSpeedMetersPerSecond = 0.8;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.4;
+        public static final double kMaxSpeedMetersPerSecond = 0.8; // 4 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.4; // 3
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*5/4;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*5/4;
     
