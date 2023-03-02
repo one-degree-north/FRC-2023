@@ -145,6 +145,10 @@ public class Arm extends SubsystemBase {
     m_pidController.setGoal(getPosition());
   }
 
+  public double getSetPoint(){
+    return m_pidController.getSetpoint().position;
+  }
+
   public double getGoal() {
     return m_pidController.getGoal().position;
   }
@@ -165,7 +169,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Left", Conversions.falconToDegrees(m_armSlave.getSelectedSensorPosition(), ArmConstants.gearRatio));
     // SmartDashboard.putNumber("Current Arm Goal", getGoal());
     SmartDashboard.putNumber("Current Arm Setpoint", m_pidController.getSetpoint().position);
-    SmartDashboard.putBoolean("Current Arm Setpoint", atGoal());
+    
 
 
 

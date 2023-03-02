@@ -35,7 +35,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
   /* Controllers */
   private final Joystick driver = new Joystick(0);
-  private final double rateLimit = 2;
+  private final double rateLimit = 5;
   boolean fieldRelative = true;
   boolean openLoop = true;
 
@@ -47,8 +47,8 @@ public class RobotContainer {
   /* Driver Buttons */
   private final Trigger zeroGyro = new Trigger(() -> driver.getPOV() == 0);
   private final Trigger zeroArm = new Trigger(() -> driver.getPOV() == 180);
-  private final Trigger intake = new Trigger(() -> driver.getPOV() == 90);
-  private final Trigger score = new Trigger(() -> driver.getPOV() == 270);
+  private final Trigger scoreLow = new Trigger(() -> driver.getPOV() == 90);
+  private final Trigger scoreHigh = new Trigger(() -> driver.getPOV() == 270);
   private final JoystickButton armHighScore = new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton armLowScore = new JoystickButton(driver, XboxController.Button.kB.value);
   private final JoystickButton armHighIntake = new JoystickButton(driver, XboxController.Button.kX.value);
@@ -67,92 +67,24 @@ public class RobotContainer {
   /* Command Stuff */
 
   // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
-  private final double DOCKED_POSITION = -25;
+  private final double DOCKED_POSITION = -40;
 
-  private final double INTAKE_HIGH = 25; //Need to Check
+  private final double INTAKE_HIGH = 40; //Need to Check
 
   // This position is as low to the floor as the intake can get within arm constraints. 
-  private final double INTAKE_LOW = 205; 
+  private final double INTAKE_LOW = 210; 
 
-  private final double OUTTAKE_MID = 185; //Need to  double Check
-  private final double OUTTAKE_NEAR = 1.65; //Need to Check
+  private final double OUTTAKE_MID = 175; //Need to  double Check
+  private final double OUTTAKE_NEAR = 1.85; //Need to Check
   private final double OUTTAKE_FAR = 2.00; //Need to Check
-  private final double OUTTAKE_LOW = 205; //Need to double Check
+  private final double OUTTAKE_LOW = 225; //Need to double Check
 
   // Commands
 
-  private Command getIntakeCommand(double seconds, boolean isIntaking) {
-    System.out.println(s_Arm.getGoal());
-    if (isIntaking) {
-
-      if (s_Arm.getGoal()>20 && s_Arm.getGoal() < 60) // Hardcoded limits for shelf intake
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> s_Intake.intake()), // Start intaking
-        new ArmCommand(s_Arm, s_Arm.getGoal()-15), // Move intake downwards (waits for arm to reach goal)
-        new WaitCommand(seconds), // Wait for specified seconds
-        new InstantCommand(() -> s_Intake.stop()), // Stop intake
-        new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15)) // Move arm back to original goal
-        );
-      else if(s_Arm.getGoal()>180 && s_Arm.getGoal() < 215) // Hardcoded limits for low intake
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> s_Intake.intake()), // Start intaking
-        new ArmCommand(s_Arm, s_Arm.getGoal()+15), // Move intake downwards (waits for arm to reach goal)
-        new WaitCommand(seconds), // Wait for specified seconds
-        new InstantCommand(() -> s_Intake.stop()), // Stop intake
-        new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()-15)) // Move arm back to original goal
-      );
-      else // Base case where current goal is outside of front intaking limits
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> s_Intake.intake()), 
-        new WaitCommand(seconds), 
-        new InstantCommand(() -> s_Intake.stop())
-        );
-
-    }
-
-    else {
-      if (s_Arm.getGoal()>160 && s_Arm.getGoal() < 190) // Hardcoded limits for outtake
-      return new SequentialCommandGroup(
-        new InstantCommand(() -> s_Intake.outtake()), // Start intaking
-        new ArmCommand(s_Arm, s_Arm.getGoal()-15), // Move intake downwards (waits for arm to reach goal)
-        new WaitCommand(seconds), // Wait for specified seconds
-        new InstantCommand(() -> s_Intake.stop())// Stop intake
-        );
-      return new SequentialCommandGroup( // Only use base case for outtaking
-        new InstantCommand(() -> s_Intake.outtake()), 
-        new WaitCommand(seconds), 
-        new InstantCommand(() -> s_Intake.stop()));
-
-    }
-   
-
-    
-  }
+  
 
   
-  private Command getScoreGamePieceCommand(double xPose, double gamePieceAngle) {
-    double cutoffXCord = 2.91;
-
-    if (s_Swerve.getPose().getX() < cutoffXCord && s_Swerve.getPose().getX() >= 0 && xPose < cutoffXCord && xPose >= 0) // For safety
-    return new SequentialCommandGroup(
-
-    // Go to position
-      s_Swerve.getGoToPoseCommand(false, // Uses PoseEstimator data (vision assisted)
-        new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), // Go to specified xPose 
-        new Rotation2d(0))), // Facing away from scoring nodes - back scoring
-
-      // IMPORTANT: THIS SHOULD BE HOVERING ABOVE THE NODE BY ABOUT 15 DEGREES
-      new ArmCommand(s_Arm, gamePieceAngle),
-
-      // Outtake Command with hardcoded time (TODO: check the appropiate number of seconds)
-      getIntakeCommand(1.5, false),
-
-      // Return to docked position
-      new ArmCommand(s_Arm, DOCKED_POSITION)
-    );
-
-    else return new InstantCommand();
-  }
+  
 
 
   //WORK IN PROGRESS (abandoned)
@@ -172,81 +104,83 @@ public class RobotContainer {
 
   private Command GP2_C_CS = new SequentialCommandGroup( // 2 game piece with climb from close side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake, 1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
-    getIntakeCommand(2, true),
+    new IntakeCommand(s_Arm, s_Intake, 1, true),
     new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
 
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score2ToChargingStation")
   );
 
   private Command GP3_CS = new SequentialCommandGroup( // 3 game piece with climb from close side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
-    getIntakeCommand(2, true),
+    new IntakeCommand(s_Arm, s_Intake, 1, true),
     new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
 
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
-    new PathPlannerFollowCommand(s_Swerve, "Score2ToGamePiece2")
+    new PathPlannerFollowCommand(s_Swerve, "Score2ToGamePiece2"),
+    new IntakeCommand(s_Arm, s_Intake, 1, true)
   );
 
   private Command GP2_C_FS = new SequentialCommandGroup( // 2 game piece with climb from far side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
-    getIntakeCommand(2, true),
+    new IntakeCommand(s_Arm, s_Intake, 1, true),
     new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
 
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score8ToChargingStation")
   );
 
   private Command GP3_FS = new SequentialCommandGroup( // 3 game piece  from far side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
-    getIntakeCommand(2, true),
+    new IntakeCommand(s_Arm, s_Intake, 1, true),
     new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
 
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
-    new PathPlannerFollowCommand(s_Swerve, "Score8ToGamePiece3")
+    new PathPlannerFollowCommand(s_Swerve, "Score8toGamePiece3"),
+    new IntakeCommand(s_Arm, s_Intake, 1, true)
   );
 
 
 
   private Command MD = new SequentialCommandGroup( // Score and Charge Station
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Charging_Station")
   
@@ -291,9 +225,11 @@ public class RobotContainer {
     armHighIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_HIGH)));
     armLowIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_LOW)));
 
-    intakeIn.onTrue(getIntakeCommand(2, true));
-    intakeOut.onTrue(getIntakeCommand(2, false));
+    intakeIn.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, true));
+    intakeOut.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, false));
 
+    scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,2.0, OUTTAKE_LOW));
+    scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID));
 
 
 

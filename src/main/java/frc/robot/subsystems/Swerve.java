@@ -179,6 +179,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+            
         }
 
         SmartDashboard.putNumber("Gyro Data", getYaw().getDegrees());
@@ -196,6 +197,8 @@ public class Swerve extends SubsystemBase {
         // a real robot, this must be calculated based either on latency or timestamps.
         Pair<Pose3d, Double> result =
                 poseEstimateHelper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+        SmartDashboard.putNumber("X_Position", poseEstimator.getEstimatedPosition().getX());
+        
         var camPose = result.getFirst();
         var camPoseObsTime = result.getSecond();
         if (camPose != null) {
