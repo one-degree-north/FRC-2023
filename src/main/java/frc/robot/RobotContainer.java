@@ -229,7 +229,7 @@ public class RobotContainer {
     intakeOut.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, false));
 
     scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,2.0, OUTTAKE_LOW));
-    scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID));
+    scoreHigh.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID));
 
 
 

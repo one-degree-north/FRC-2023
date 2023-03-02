@@ -4,10 +4,13 @@
 
 package frc.robot.commands;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.autos.TrajectoryFollowCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -42,11 +45,13 @@ public class AlignCommand extends CommandBase {
   public void execute() {
     if (s_Swerve.getPose().getX() < cutoffXCord && s_Swerve.getPose().getX() >= 0 && xPose < cutoffXCord && xPose >= 0){ // For safety
     // Go to position
-      s_Swerve.getGoToPoseCommand(false, // Uses PoseEstimator data (vision assisted)
-        new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), // Go to specified xPose 
-        new Rotation2d(0))); // Facing away from scoring nodes - back scoring
+        new TrajectoryFollowCommand(s_Swerve, s_Swerve.getPose(), new ArrayList<Translation2d>(), new Pose2d(new Translation2d(xPose, s_Swerve.getPose().getY()), // Go to specified xPose 
+          new Rotation2d(0)), false);
+      
     }
-    done = true;
+    else{
+      done = true;
+    }
 
   }
 
@@ -59,6 +64,6 @@ public class AlignCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done||(s_Swerve.getPose().getX()>xPose-0.1 && s_Swerve.getPose().getX()<xPose-0.1) ;
+    return done||(s_Swerve.getPose().getX()>xPose-0.02 && s_Swerve.getPose().getX()<xPose+0.02) ;
   }
 }
