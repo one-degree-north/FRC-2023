@@ -62,30 +62,30 @@ public class RobotContainer {
   public final Swerve s_Swerve = new Swerve();
   public final Arm s_Arm = new Arm();
   public final Intake s_Intake = new Intake();
-  public final PoseEstimate position = new PoseEstimate();
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /* Command Stuff */
 
   // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
-  private final double DOCKED_POSITION = -32;
+  private final double DOCKED_POSITION = -25;
 
   private final double INTAKE_HIGH = 25; //Need to Check
 
   // This position is as low to the floor as the intake can get within arm constraints. 
-  private final double INTAKE_LOW = -50; 
+  private final double INTAKE_LOW = 205; 
 
   private final double OUTTAKE_MID = 185; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.65; //Need to Check
   private final double OUTTAKE_FAR = 2.00; //Need to Check
-  private final double OUTTAKE_LOW = 220; //Need to double Check
+  private final double OUTTAKE_LOW = 205; //Need to double Check
 
   // Commands
 
   private Command getIntakeCommand(double seconds, boolean isIntaking) {
+    System.out.println(s_Arm.getGoal());
     if (isIntaking) {
 
-      if (s_Arm.getGoal()>-30 && s_Arm.getGoal() < 180) // Hardcoded limits for front intake AND shelf intake
+      if (s_Arm.getGoal()>20 && s_Arm.getGoal() < 60) // Hardcoded limits for shelf intake
       return new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.intake()), // Start intaking
         new ArmCommand(s_Arm, s_Arm.getGoal()-15), // Move intake downwards (waits for arm to reach goal)
@@ -93,7 +93,14 @@ public class RobotContainer {
         new InstantCommand(() -> s_Intake.stop()), // Stop intake
         new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()+15)) // Move arm back to original goal
         );
-      
+      else if(s_Arm.getGoal()>180 && s_Arm.getGoal() < 215) // Hardcoded limits for low intake
+      return new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.intake()), // Start intaking
+        new ArmCommand(s_Arm, s_Arm.getGoal()+15), // Move intake downwards (waits for arm to reach goal)
+        new WaitCommand(seconds), // Wait for specified seconds
+        new InstantCommand(() -> s_Intake.stop()), // Stop intake
+        new InstantCommand(() -> s_Arm.setGoal(s_Arm.getGoal()-15)) // Move arm back to original goal
+      );
       else // Base case where current goal is outside of front intaking limits
       return new SequentialCommandGroup(
         new InstantCommand(() -> s_Intake.intake()), 
@@ -104,6 +111,13 @@ public class RobotContainer {
     }
 
     else {
+      if (s_Arm.getGoal()>160 && s_Arm.getGoal() < 190) // Hardcoded limits for outtake
+      return new SequentialCommandGroup(
+        new InstantCommand(() -> s_Intake.outtake()), // Start intaking
+        new ArmCommand(s_Arm, s_Arm.getGoal()-15), // Move intake downwards (waits for arm to reach goal)
+        new WaitCommand(seconds), // Wait for specified seconds
+        new InstantCommand(() -> s_Intake.stop())// Stop intake
+        );
       return new SequentialCommandGroup( // Only use base case for outtaking
         new InstantCommand(() -> s_Intake.outtake()), 
         new WaitCommand(seconds), 
@@ -118,6 +132,7 @@ public class RobotContainer {
   
   private Command getScoreGamePieceCommand(double xPose, double gamePieceAngle) {
     double cutoffXCord = 2.91;
+
     if (s_Swerve.getPose().getX() < cutoffXCord && s_Swerve.getPose().getX() >= 0 && xPose < cutoffXCord && xPose >= 0) // For safety
     return new SequentialCommandGroup(
 
@@ -160,10 +175,11 @@ public class RobotContainer {
     getScoreGamePieceCommand(1.8, OUTTAKE_MID),
 
     new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
-
+    
+    new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
-    getIntakeCommand(1.5, true),
-
+    getIntakeCommand(2, true),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
 
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
@@ -172,15 +188,84 @@ public class RobotContainer {
     new PathPlannerFollowCommand(s_Swerve, "Score2ToChargingStation")
   );
 
+  private Command GP3_CS = new SequentialCommandGroup( // 3 game piece with climb from close side
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
+    
+    new ArmCommand(s_Arm, INTAKE_LOW),
+    // TODO: TUNE INTAKE COMMAND SECONDS
+    getIntakeCommand(2, true),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
+    new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
+
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score2ToGamePiece2")
+  );
+
+  private Command GP2_C_FS = new SequentialCommandGroup( // 2 game piece with climb from far side
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
+    
+    new ArmCommand(s_Arm, INTAKE_LOW),
+    // TODO: TUNE INTAKE COMMAND SECONDS
+    getIntakeCommand(2, true),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
+    new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
+
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score8ToChargingStation")
+  );
+
+  private Command GP3_FS = new SequentialCommandGroup( // 3 game piece  from far side
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
+    
+    new ArmCommand(s_Arm, INTAKE_LOW),
+    // TODO: TUNE INTAKE COMMAND SECONDS
+    getIntakeCommand(2, true),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
+    new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
+
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Score8ToGamePiece3")
+  );
+
+
+
+  private Command MD = new SequentialCommandGroup( // Score and Charge Station
+    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    getScoreGamePieceCommand(1.8, OUTTAKE_MID),
+
+    new PathPlannerFollowCommand(s_Swerve, "Charging_Station")
+  
+  );
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver, translationAxis, strafeAxis, rotationAxis, fieldRelative, openLoop, rateLimit));
 
     // ADD ALL AUTONS HERE
+    m_chooser.addOption("GP2C_CS", GP2_C_CS);
+    m_chooser.addOption("GP3_CS", GP3_CS);
+    m_chooser.addOption("GP2C_FS", GP2_C_FS);
+    m_chooser.addOption("GP3_FS", GP3_FS);
+    m_chooser.addOption("Mid", MD);
 
     // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
-    m_chooser.setDefaultOption("GP2C_CS", GP2_C_CS);
+    m_chooser.setDefaultOption("GP3_CS", GP3_CS);
 
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -200,18 +285,14 @@ public class RobotContainer {
     zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     zeroArm.onTrue(new InstantCommand(() -> s_Arm.setGoal(DOCKED_POSITION)));
 
-    intake.onTrue(getIntakeCommand(2, true));
-    score.onTrue(getIntakeCommand(2, false));
 
     armHighScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_MID)));
     armLowScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_LOW)));
     armHighIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_HIGH)));
     armLowIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_LOW)));
 
-    intakeIn.onTrue(new InstantCommand(() -> s_Intake.intake()));
-    intakeIn.onFalse(new InstantCommand(() -> s_Intake.stop()));
-    intakeOut.onTrue(new InstantCommand(() -> s_Intake.outtake()));
-    intakeOut.onFalse(new InstantCommand(() -> s_Intake.stop()));
+    intakeIn.onTrue(getIntakeCommand(2, true));
+    intakeOut.onTrue(getIntakeCommand(2, false));
 
 
 

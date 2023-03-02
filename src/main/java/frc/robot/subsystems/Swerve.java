@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
@@ -205,8 +207,8 @@ public class Swerve extends SubsystemBase {
 
     // Use odometryOnly mode if target pose is relative to startingPose instead of the entire field
     public Command getGoToPoseCommand(boolean odometryOnly, Pose2d targetPose) {
-        if (!odometryOnly) return new TrajectoryFollowCommand(this, getPose(), null, targetPose, false);
-        else return new TrajectoryFollowCommand(this, new Pose2d(0, 0, getYaw()), null, targetPose, false);
+        if (!odometryOnly) return new TrajectoryFollowCommand(this, getPose(), new ArrayList<Translation2d>(), targetPose, false);
+        else return new TrajectoryFollowCommand(this, new Pose2d(0, 0, getYaw()), new ArrayList<Translation2d>(), targetPose, false);
     }
 
 }
