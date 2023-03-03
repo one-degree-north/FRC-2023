@@ -68,14 +68,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    m_robotContainer.s_Swerve.resetModulesToAbsolute();
-    m_robotContainer.s_Arm.resetToAbsolute();
-    m_robotContainer.s_Arm.setCurrentPosToGoal();
+    // m_robotContainer.s_Swerve.resetModulesToAbsolute();
+    // m_robotContainer.s_Arm.resetToAbsolute();
+    // m_robotContainer.s_Arm.setCurrentPosToGoal();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    
   }
 
   @Override
