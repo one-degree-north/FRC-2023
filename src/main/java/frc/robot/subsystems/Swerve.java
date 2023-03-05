@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.SwerveModule;
@@ -177,6 +179,7 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+            
         }
 
         SmartDashboard.putNumber("Gyro Data", getYaw().getDegrees());
@@ -194,6 +197,8 @@ public class Swerve extends SubsystemBase {
         // a real robot, this must be calculated based either on latency or timestamps.
         Pair<Pose3d, Double> result =
                 poseEstimateHelper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+        SmartDashboard.putNumber("X_Position", poseEstimator.getEstimatedPosition().getX());
+        
         var camPose = result.getFirst();
         var camPoseObsTime = result.getSecond();
         if (camPose != null) {
@@ -205,8 +210,8 @@ public class Swerve extends SubsystemBase {
 
     // Use odometryOnly mode if target pose is relative to startingPose instead of the entire field
     public Command getGoToPoseCommand(boolean odometryOnly, Pose2d targetPose) {
-        if (!odometryOnly) return new TrajectoryFollowCommand(this, getPose(), null, targetPose, false);
-        else return new TrajectoryFollowCommand(this, new Pose2d(0, 0, getYaw()), null, targetPose, false);
+        if (!odometryOnly) return new TrajectoryFollowCommand(this, getPose(), new ArrayList<Translation2d>(), targetPose, false);
+        else return new TrajectoryFollowCommand(this, new Pose2d(0, 0, getYaw()), new ArrayList<Translation2d>(), targetPose, false);
     }
 
 }
