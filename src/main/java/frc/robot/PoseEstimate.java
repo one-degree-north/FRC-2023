@@ -55,7 +55,7 @@ public class PoseEstimate {
         PhotonPipelineResult lastResult = limeLight.getLatestResult();
 
         if (result.isPresent() && lastResult.hasTargets() && lastResult.getBestTarget().getPoseAmbiguity() <= 0.2) {
-        SmartDashboard.putNumber("Best target ambguitiy", limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
+            SmartDashboard.putNumber("Best target ambguitiy", limeLight.getLatestResult().getBestTarget().getPoseAmbiguity());
             // System.out.println("Latency: " + result.get().getSecond());
             double timestamp = (currentTime - (result.get().getSecond() / 1000));
             // System.out.println(timestamp);

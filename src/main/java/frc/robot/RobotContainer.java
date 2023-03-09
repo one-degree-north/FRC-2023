@@ -67,7 +67,7 @@ public class RobotContainer {
   /* Command Stuff */
 
   // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
-  private final double DOCKED_POSITION = -40;
+  private final double DOCKED_POSITION = -43;
 
   private final double INTAKE_HIGH = 40; //Need to Check
 
@@ -102,78 +102,89 @@ public class RobotContainer {
 
   // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
 
-  private Command GP2_C_CS = new SequentialCommandGroup( // 2 game piece with climb from close side
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake, 1.8, OUTTAKE_MID),
-
-    new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
+  // private Command GP2_C_CS = new SequentialCommandGroup( // 2 game piece with climb from close side
+  //   // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+  //   new ArmCommand(s_Arm, OUTTAKE_MID),
+  //   new IntakeCommand(s_Arm, s_Intake, 1, false),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
+  //   new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
     
-    new ArmCommand(s_Arm, INTAKE_LOW),
-    // TODO: TUNE INTAKE COMMAND SECONDS
-    new IntakeCommand(s_Arm, s_Intake, 1, true),
-    new ArmCommand(s_Arm, DOCKED_POSITION),
-    new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
+  //   new ArmCommand(s_Arm, INTAKE_LOW),
+  //   // TODO: TUNE INTAKE COMMAND SECONDS
+  //   new IntakeCommand(s_Arm, s_Intake, 1, true),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
+  //   new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
 
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
+  //   // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+  //   new ArmCommand(s_Arm, OUTTAKE_MID),
+  //   new IntakeCommand(s_Arm, s_Intake, 1, false),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
 
-    new PathPlannerFollowCommand(s_Swerve, "Score2ToChargingStation")
-  );
+  //   new PathPlannerFollowCommand(s_Swerve, "Score2ToChargingStation")
+  // );
 
   private Command GP3_CS = new SequentialCommandGroup( // 3 game piece with climb from close side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
+    new ArmCommand(s_Arm, OUTTAKE_MID),
+    new IntakeCommand(s_Arm, s_Intake, 1, false),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "Score1ToGamePiece1"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
     new IntakeCommand(s_Arm, s_Intake, 1, true),
-    new ArmCommand(s_Arm, DOCKED_POSITION),
-    new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
+    new ArmCommand(s_Arm, DOCKED_POSITION)
+    // new PathPlannerFollowCommand(s_Swerve, "GamePiece1ToScore2"),
 
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
-    new PathPlannerFollowCommand(s_Swerve, "Score2ToGamePiece2"),
-    new IntakeCommand(s_Arm, s_Intake, 1, true)
+    // // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    // new ArmCommand(s_Arm, OUTTAKE_MID),
+    // new IntakeCommand(s_Arm, s_Intake, 1, false),
+    // new ArmCommand(s_Arm, DOCKED_POSITION),
+    // new PathPlannerFollowCommand(s_Swerve, "Score2ToGamePiece2"),
+    // new IntakeCommand(s_Arm, s_Intake, 1, true),
+    // new ArmCommand(s_Arm, DOCKED_POSITION)
   );
 
-  private Command GP2_C_FS = new SequentialCommandGroup( // 2 game piece with climb from far side
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
-    new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
+  // private Command GP2_C_FS = new SequentialCommandGroup( // 2 game piece with climb from far side
+  //   // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+  //   new ArmCommand(s_Arm, OUTTAKE_MID),
+  //   new IntakeCommand(s_Arm, s_Intake, 1, false),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
+  //   new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
     
-    new ArmCommand(s_Arm, INTAKE_LOW),
-    // TODO: TUNE INTAKE COMMAND SECONDS
-    new IntakeCommand(s_Arm, s_Intake, 1, true),
-    new ArmCommand(s_Arm, DOCKED_POSITION),
-    new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
+  //   new ArmCommand(s_Arm, INTAKE_LOW),
+  //   // TODO: TUNE INTAKE COMMAND SECONDS
+  //   new IntakeCommand(s_Arm, s_Intake, 1, true),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
+  //   new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
 
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
-    new PathPlannerFollowCommand(s_Swerve, "Score8ToChargingStation")
-  );
+  //   // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+  //   new ArmCommand(s_Arm, OUTTAKE_MID),
+  //   new IntakeCommand(s_Arm, s_Intake, 1, false),
+  //   new ArmCommand(s_Arm, DOCKED_POSITION),
+  //   new PathPlannerFollowCommand(s_Swerve, "Score8ToChargingStation")
+  // );
 
   private Command GP3_FS = new SequentialCommandGroup( // 3 game piece  from far side
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
+    new ArmCommand(s_Arm, OUTTAKE_MID),
+    new IntakeCommand(s_Arm, s_Intake, 1, false),
+    new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "Score9ToGamePiece4"), 
     
     new ArmCommand(s_Arm, INTAKE_LOW),
     // TODO: TUNE INTAKE COMMAND SECONDS
     new IntakeCommand(s_Arm, s_Intake, 1, true),
-    new ArmCommand(s_Arm, DOCKED_POSITION),
-    new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
+    new ArmCommand(s_Arm, DOCKED_POSITION)
+    // new PathPlannerFollowCommand(s_Swerve, "GamePiece4ToScore8"),
 
-    // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
-    new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
-    new PathPlannerFollowCommand(s_Swerve, "Score8toGamePiece3"),
-    new IntakeCommand(s_Arm, s_Intake, 1, true)
+    // // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
+    // new ArmCommand(s_Arm, OUTTAKE_MID),
+    // new IntakeCommand(s_Arm, s_Intake, 1, false),
+    // new ArmCommand(s_Arm, DOCKED_POSITION),
+    // new PathPlannerFollowCommand(s_Swerve, "Score8toGamePiece3"),
+    // new IntakeCommand(s_Arm, s_Intake, 1, true),
+    // new ArmCommand(s_Arm, DOCKED_POSITION)
   );
 
 
@@ -181,7 +192,7 @@ public class RobotContainer {
   private Command MD = new SequentialCommandGroup( // Score and Charge Station
     // TODO: TUNE X POSE (X POSITION ON PATHPLANNER THAT WILL LET US SCORE)
     new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID),
-
+    new ArmCommand(s_Arm, DOCKED_POSITION),
     new PathPlannerFollowCommand(s_Swerve, "Charging_Station")
   
   );
@@ -192,9 +203,9 @@ public class RobotContainer {
     s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, driver, translationAxis, strafeAxis, rotationAxis, fieldRelative, openLoop, rateLimit));
 
     // ADD ALL AUTONS HERE
-    m_chooser.addOption("GP2C_CS", GP2_C_CS);
+    // m_chooser.addOption("GP2C_CS", GP2_C_CS);
     m_chooser.addOption("GP3_CS", GP3_CS);
-    m_chooser.addOption("GP2C_FS", GP2_C_FS);
+    // m_chooser.addOption("GP2C_FS", GP2_C_FS);
     m_chooser.addOption("GP3_FS", GP3_FS);
     m_chooser.addOption("Mid", MD);
     m_chooser.addOption("Test Drive", new PathPlannerFollowCommand(s_Swerve, "New New Path"));
@@ -229,7 +240,7 @@ public class RobotContainer {
 
     intakeIn.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, true));
     intakeOut.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, false));
-
+    
     // scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,2.0, OUTTAKE_LOW));
     // scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID));
 
