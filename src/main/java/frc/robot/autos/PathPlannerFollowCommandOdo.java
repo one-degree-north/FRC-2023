@@ -16,15 +16,15 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.*;
 
-public class PathPlannerFollowCommand extends SequentialCommandGroup {
+public class PathPlannerFollowCommandOdo extends SequentialCommandGroup {
 
-  public PathPlannerFollowCommand(Swerve swerve, String pathName) {
+  public PathPlannerFollowCommandOdo(Swerve swerve, String pathName) {
     //Exclude ".path" from pathName
     PathPlannerTrajectory trajectory = PathPlanner.loadPath(pathName, AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared);
     PPSwerveControllerCommand swerveControllerCommand = new PPSwerveControllerCommand(
         trajectory,
-        swerve::getPose,
+        swerve::getOdometryPose,
         SwerveConstants.swerveKinematics,
         new PIDController(AutoConstants.kPXController, 0, 0),
         new PIDController(AutoConstants.kPYController, 0, 0),
@@ -37,7 +37,7 @@ public class PathPlannerFollowCommand extends SequentialCommandGroup {
 
     // change the lambda to an external command or state it outside the runOnce function
     addCommands(new InstantCommand(() -> {
-      swerve.resetPose(trajectory.getInitialHolonomicPose());
+      swerve.resetOdometry(trajectory.getInitialHolonomicPose());
     }, swerve),
         swerveControllerCommand);
   }

@@ -19,7 +19,7 @@ public final class Constants {
 
         public static final Transform3d robotToCam =
                 new Transform3d(
-                        new Translation3d(0.1905, 0.0, 0.889), // Camera offset in meters - TODO NOW
+                        new Translation3d(-0.1905, 0.0, 0.889), // Camera offset in meters - TODO NOW -0.1905, 0.0, 0.889
                         // X should be forward/back and Z should be height
                         new Rotation3d(
                                 0, 0,
@@ -176,14 +176,14 @@ public final class Constants {
     public static final class AutoConstants {
 
         // Be very when increasing max speed
-        public static final double kMaxSpeedMetersPerSecond = 0.8; // 4 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.4; // 3
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*5/4;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*5/4;
+        public static final double kMaxSpeedMetersPerSecond = 4; // 4 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 4; // 3
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*6;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*5;
     
-        public static final double kPXController = 0.6;
-        public static final double kPYController = 0.6;
-        public static final double kPThetaController = 0.8;
+        public static final double kPXController = 5.5;
+        public static final double kPYController = 5.5;
+        public static final double kPThetaController = 6;
     
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
