@@ -9,6 +9,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -37,7 +38,7 @@ public class PathPlannerFollowCommandOdo extends SequentialCommandGroup {
 
     // change the lambda to an external command or state it outside the runOnce function
     addCommands(new InstantCommand(() -> {
-      swerve.resetOdometry(trajectory.getInitialHolonomicPose());
+      swerve.resetOdometryWithNewRotation(trajectory.getInitialPose(), trajectory.getInitialPose().getRotation());
     }, swerve),
         swerveControllerCommand);
   }
