@@ -217,6 +217,8 @@ public class RobotContainer {
     // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
     m_chooser.addOption("Basic Auton", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION), new PathPlannerFollowCommandOdo(s_Swerve, "Out of Community")));
 
+    m_chooser.setDefaultOption("Just score", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION)));
+
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
 
@@ -258,6 +260,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new SequentialCommandGroup(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()), new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
+    return new SequentialCommandGroup(new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
   }
 }
