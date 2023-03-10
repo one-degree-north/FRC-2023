@@ -38,7 +38,7 @@ public class PathPlannerFollowCommandOdo extends SequentialCommandGroup {
 
     // change the lambda to an external command or state it outside the runOnce function
     addCommands(new InstantCommand(() -> {
-      swerve.resetOdometryWithNewRotation(trajectory.getInitialPose(), trajectory.getInitialPose().getRotation());
+      swerve.resetOdometry(trajectory.getInitialHolonomicPose());
     }, swerve),
         swerveControllerCommand);
   }
