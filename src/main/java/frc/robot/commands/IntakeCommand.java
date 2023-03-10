@@ -38,11 +38,11 @@ public class IntakeCommand extends CommandBase {
     if (isIntaking) {
       if (s_Arm.getSetPoint()>5 && s_Arm.getSetPoint() < 60){ // Hardcoded limits for shelf intake
         s_Intake.intake();// Start intaking
-        s_Arm.setGoal(s_Arm.getSetPoint()-5); // Move intake downwards (waits for arm to reach goal)
+        s_Arm.setGoal(s_Arm.getSetPoint()-10); // Move intake downwards (waits for arm to reach goal)
       }
       else if(s_Arm.getSetPoint()>180 && s_Arm.getSetPoint()< 220){ // Hardcoded limits for low intake
         s_Intake.intake(); // Start intaking
-        s_Arm.setGoal(s_Arm.getSetPoint()+20); // Move intake downwards (waits for arm to reach goal
+        s_Arm.setGoal(s_Arm.getSetPoint()+5); // Move intake downwards (waits for arm to reach goal
       }
       else{
         s_Intake.intake();
@@ -71,10 +71,10 @@ public class IntakeCommand extends CommandBase {
     s_Intake.stop();
     if(isIntaking){
       if(s_Arm.getSetPoint()>170 && s_Arm.getSetPoint()< 240){
-        s_Arm.setGoal(s_Arm.getSetPoint()-15);
+        s_Arm.setGoal(s_Arm.getSetPoint()-5);
       }
       else if(s_Arm.getSetPoint()>-10 && s_Arm.getSetPoint() < 60){
-        s_Arm.setGoal(s_Arm.getSetPoint()+15);
+        s_Arm.setGoal(s_Arm.getSetPoint()+10);
       }
     }
   }

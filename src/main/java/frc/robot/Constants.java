@@ -136,7 +136,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 20;
-            public static final double angleOffset = 316.06;
+            public static final double angleOffset = 132.011+180;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -146,7 +146,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 5;
             public static final int canCoderID = 23;
-            public static final double angleOffset = 323;
+            public static final double angleOffset = 141.591+180;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -156,7 +156,7 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 21;
-            public static final double angleOffset = 181.17;
+            public static final double angleOffset = 354.023-180;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -166,7 +166,7 @@ public final class Constants {
             public static final int driveMotorID = 8;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 22;
-            public static final double angleOffset = 323.49;
+            public static final double angleOffset = 140.44+180;
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -176,8 +176,8 @@ public final class Constants {
     public static final class AutoConstants {
 
         // Be very when increasing max speed
-        public static final double kMaxSpeedMetersPerSecond = 4; // 4 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 4; // 3
+        public static final double kMaxSpeedMetersPerSecond = 2; // 4 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3; // 3
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*6;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*5;
     

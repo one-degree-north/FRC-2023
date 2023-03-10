@@ -69,10 +69,10 @@ public class RobotContainer {
   // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
   private final double DOCKED_POSITION = -43;
 
-  private final double INTAKE_HIGH = 40; //Need to Check
+  private final double INTAKE_HIGH = 45; //Need to Check
 
   // This position is as low to the floor as the intake can get within arm constraints. 
-  private final double INTAKE_LOW = 210; 
+  private final double INTAKE_LOW = 220; 
 
   private final double OUTTAKE_MID = 160; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.85; //Need to Check
@@ -209,10 +209,12 @@ public class RobotContainer {
     m_chooser.addOption("GP3_FS", GP3_FS);
     m_chooser.addOption("Mid", MD);
     m_chooser.addOption("Test Drive", new PathPlannerFollowCommand(s_Swerve, "New New Path"));
+    m_chooser.addOption("Middle Basic Auton", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(1), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION), new PathPlannerFollowCommandOdo(s_Swerve, "Middle Out of Community")));
+
 
 
     // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
-    m_chooser.setDefaultOption("Basic Auton", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new InstantCommand(() -> s_Intake.outtake()), new WaitCommand(2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, DOCKED_POSITION), new PathPlannerFollowCommandOdo(s_Swerve, "Out of Community")));
+    m_chooser.addOption("Basic Auton", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(1), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION), new PathPlannerFollowCommandOdo(s_Swerve, "Out of Community")));
 
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -240,7 +242,7 @@ public class RobotContainer {
 
     intakeIn.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, true));
     intakeOut.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, false));
-    
+
     // scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,2.0, OUTTAKE_LOW));
     // scoreLow.onTrue(new ScoreCommand(s_Swerve, s_Arm, s_Intake,1.8, OUTTAKE_MID));
 
