@@ -74,7 +74,7 @@ public class RobotContainer {
   // This position is as low to the floor as the intake can get within arm constraints. 
   private final double INTAKE_LOW = 220; 
 
-  private final double OUTTAKE_MID = 163; //Need to  double Check
+  private final double OUTTAKE_MID = 162; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.85; //Need to Check
   private final double OUTTAKE_FAR = 2.00; //Need to Check
   private final double OUTTAKE_LOW = 220; //Need to double Check
@@ -258,6 +258,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new SequentialCommandGroup(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()), new InstantCommand(()->s_Swerve.zeroGyro()), new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
+    return new SequentialCommandGroup(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()), new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
   }
 }

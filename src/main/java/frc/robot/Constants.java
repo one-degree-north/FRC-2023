@@ -111,9 +111,9 @@ public final class Constants {
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values */
-        public static final double driveKS = (0.32 / 12); //15922 //divide by 12 to convert from volts to percent output for CTRE
-        public static final double driveKV = (1.51 / 12); //058074
-        public static final double driveKA = (0.27 / 12); // 0044388
+        public static final double driveKS = (0.15922 / 12); //15922 //divide by 12 to convert from volts to percent output for CTRE
+        public static final double driveKV = (0.058074 / 12); //058074
+        public static final double driveKA = (0.0044388 / 12); // 0044388
 
         /* Swerve Profiling Values */
         public static final double maxSpeed = 4.5; //meters per second
@@ -178,12 +178,12 @@ public final class Constants {
         // Be very careful when increasing max speed
         public static final double kMaxSpeedMetersPerSecond = 0.5; // 4 
         public static final double kMaxAccelerationMetersPerSecondSquared = 1; // 3
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*2;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*3;
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*2;
     
-        public static final double kPXController = 2.5;
-        public static final double kPYController = 2.5;
-        public static final double kPThetaController = 5;
+        public static final double kPXController = 0.1;
+        public static final double kPYController = 0.1;
+        public static final double kPThetaController = 1;
     
         // Constraint for the motion profilied robot angle controller
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
