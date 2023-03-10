@@ -40,7 +40,7 @@ public class IntakeCommand extends CommandBase {
         s_Intake.intake();// Start intaking
         s_Arm.setGoal(s_Arm.getSetPoint()-10); // Move intake downwards (waits for arm to reach goal)
       }
-      else if(s_Arm.getSetPoint()>180 && s_Arm.getSetPoint()< 220){ // Hardcoded limits for low intake
+      else if(s_Arm.getSetPoint()>180 && s_Arm.getSetPoint()< 240){ // Hardcoded limits for low intake
         s_Intake.intake(); // Start intaking
         s_Arm.setGoal(s_Arm.getSetPoint()+5); // Move intake downwards (waits for arm to reach goal
       }
@@ -58,6 +58,7 @@ public class IntakeCommand extends CommandBase {
         s_Arm.setGoal(s_Arm.getSetPoint()-5);// Move intake downwards (waits for arm to reach goal)
       }
       else{ // Only use base case for outtaking
+
         s_Intake.outtake();
       }
         
@@ -70,7 +71,7 @@ public class IntakeCommand extends CommandBase {
   public void end(boolean interrupted) {
     s_Intake.stop();
     if(isIntaking){
-      if(s_Arm.getSetPoint()>170 && s_Arm.getSetPoint()< 240){
+      if(s_Arm.getSetPoint()>170){
         s_Arm.setGoal(s_Arm.getSetPoint()-5);
       }
       else if(s_Arm.getSetPoint()>-10 && s_Arm.getSetPoint() < 60){
