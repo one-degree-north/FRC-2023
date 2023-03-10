@@ -105,15 +105,15 @@ public final class Constants {
         public static final double angleKF = 0.0;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.016468;
+        public static final double driveKP = 0.05;
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values */
-        public static final double driveKS = (0.15922 / 12); //divide by 12 to convert from volts to percent output for CTRE
-        public static final double driveKV = (0.058074 / 12);
-        public static final double driveKA = (0.0044388 / 12);
+        public static final double driveKS = (0.32 / 12); //15922 //divide by 12 to convert from volts to percent output for CTRE
+        public static final double driveKV = (1.51 / 12); //058074
+        public static final double driveKA = (0.27 / 12); // 0044388
 
         /* Swerve Profiling Values */
         public static final double maxSpeed = 4.5; //meters per second
@@ -175,10 +175,10 @@ public final class Constants {
 
     public static final class AutoConstants {
 
-        // Be very when increasing max speed
-        public static final double kMaxSpeedMetersPerSecond = 1; // 4 
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2; // 3
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*3;
+        // Be very careful when increasing max speed
+        public static final double kMaxSpeedMetersPerSecond = 0.5; // 4 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 1; // 3
+        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI*2;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI*3;
     
         public static final double kPXController = 2.5;

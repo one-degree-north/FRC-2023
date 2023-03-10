@@ -258,6 +258,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new SequentialCommandGroup(new InstantCommand(()->s_Swerve.zeroGyro()), new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
+    return new SequentialCommandGroup(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()), new InstantCommand(()->s_Swerve.zeroGyro()), new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
   }
 }
