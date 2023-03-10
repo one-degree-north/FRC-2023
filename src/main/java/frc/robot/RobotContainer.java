@@ -53,7 +53,7 @@ public class RobotContainer {
   private final JoystickButton armLowScore = new JoystickButton(driver, XboxController.Button.kB.value);
   private final JoystickButton armHighIntake = new JoystickButton(driver, XboxController.Button.kX.value);
   private final JoystickButton armLowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
-  private final Trigger intakeIn = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton intakeIn = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
   private final JoystickButton intakeOut = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
   
 
@@ -77,7 +77,7 @@ public class RobotContainer {
   private final double OUTTAKE_MID = 160; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.85; //Need to Check
   private final double OUTTAKE_FAR = 2.00; //Need to Check
-  private final double OUTTAKE_LOW = 225; //Need to double Check
+  private final double OUTTAKE_LOW = 220; //Need to double Check
 
   // Commands
 

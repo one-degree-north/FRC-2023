@@ -45,7 +45,7 @@ public class Arm extends SubsystemBase {
 
   private final double UPLIMIT = 270;
 
-  private final double TOLERANCE = 5;
+  private final double TOLERANCE = 1;
 
   /** Creates a new Arm. */
   public Arm() {
