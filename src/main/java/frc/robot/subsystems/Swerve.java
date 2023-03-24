@@ -146,6 +146,10 @@ public class Swerve extends SubsystemBase {
         return gyro.getPitch();
     }
 
+    public double getRoll() {
+        return gyro.getRoll();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
@@ -186,6 +190,8 @@ public class Swerve extends SubsystemBase {
 
         SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
         SmartDashboard.putNumber("Gyro Pitch", getPitch());
+        SmartDashboard.putNumber("Gyro Roll", getRoll());
+
         
         updateOdometry();
         

@@ -14,41 +14,43 @@ public class BalanceCommand extends CommandBase {
   private boolean m_reverse;
   private Swerve s_Swerve;
 
-  private PIDController m_controller;
-
-  private double kP = 0.1;
-  private double kI = 0.0;
-  private double kD = 0.0;
-  private double tolerance = 2.0;
-  private double maxOutput = 0.1;
+  private double targetAngle;
+  private double speed;
 
   private double angle;
   private double output;
 
 
   /** Creates a new BalanceCommand. */
-  public BalanceCommand(boolean reverse, Swerve swerve) {
+  public BalanceCommand(double targetAngle, double speed, boolean reverse, Swerve swerve) {
+    this.targetAngle = targetAngle;
+    this.speed = speed;
     this.s_Swerve = swerve;
     this.m_reverse = reverse;
     addRequirements(s_Swerve);
 
-    m_controller = new PIDController(kP, kI, kD);
-    m_controller.setTolerance(tolerance);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_controller.setSetpoint(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    angle = s_Swerve.getPitch();
-    output = (!m_reverse) ? MathUtil.clamp(m_controller.calculate(angle), -maxOutput, maxOutput) 
-    : -1 * MathUtil.clamp(m_controller.calculate(angle), -maxOutput, maxOutput);
+    angle = s_Swerve.getRoll();
+
+    // Stop when within range
+    if (angle <= -targetAngle)
+      output = (!m_reverse ? speed : -speed);
+    else if (angle >= targetAngle)
+      output = (!m_reverse ? -speed : speed);
+    else
+      output = 0;
+
+    // Drive output
     s_Swerve.drive(new Translation2d(output, 0), 0, true, true);
   }
 
@@ -61,6 +63,6 @@ public class BalanceCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_controller.atSetpoint();
+    return angle < targetAngle && angle > -targetAngle;
   }
 }

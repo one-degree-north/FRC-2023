@@ -68,6 +68,9 @@ public class RobotContainer {
 
   /* Command Stuff */
 
+  private final double targAngle = 11;
+  private final double csSpeed = 0.2;
+
   // This position is HOVERING SLIGHTLY ABOVE THE INTAKE LOW POSITION. 
   private final double DOCKED_POSITION = -43;
 
@@ -235,7 +238,14 @@ public class RobotContainer {
     new IntakeCommand(s_Arm, s_Intake, 1, false), 
     new ArmCommand(s_Arm, DOCKED_POSITION)));
 
-    m_chooser.addOption("TEST Auto Balance", new BalanceCommand(false, s_Swerve));
+    
+
+    m_chooser.addOption("TEST Auto Balance", new BalanceCommand(targAngle, csSpeed, false, s_Swerve));
+    
+    m_chooser.addOption("Charge Station Real", new SequentialCommandGroup(
+      new PathPlannerFollowCommandOdo(s_Swerve, "charge station"), 
+    new InstantCommand(() -> s_Swerve.zeroGyro()), 
+    new BalanceCommand(targAngle, csSpeed, false, s_Swerve)));
 
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
