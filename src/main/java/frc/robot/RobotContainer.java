@@ -235,6 +235,8 @@ public class RobotContainer {
     new IntakeCommand(s_Arm, s_Intake, 1, false), 
     new ArmCommand(s_Arm, DOCKED_POSITION)));
 
+    m_chooser.addOption("TEST Auto Balance", new BalanceCommand(false, s_Swerve));
+
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
 

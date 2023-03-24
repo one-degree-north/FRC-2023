@@ -184,7 +184,8 @@ public class Swerve extends SubsystemBase {
             
         }
 
-        SmartDashboard.putNumber("Gyro Data", getYaw().getDegrees());
+        SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
+        SmartDashboard.putNumber("Gyro Pitch", getPitch());
         
         updateOdometry();
         
