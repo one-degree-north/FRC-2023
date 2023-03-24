@@ -142,6 +142,10 @@ public class Swerve extends SubsystemBase {
         return gyro.getRotation2d();
     }
 
+    public double getPitch() {
+        return gyro.getPitch();
+    }
+
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
