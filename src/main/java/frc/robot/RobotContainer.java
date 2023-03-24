@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import javax.management.InstanceNotFoundException;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -52,7 +54,7 @@ public class RobotContainer {
   private final JoystickButton armHighScore = new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton armLowScore = new JoystickButton(driver, XboxController.Button.kB.value);
   private final JoystickButton armHighIntake = new JoystickButton(driver, XboxController.Button.kX.value);
-  private final JoystickButton armLowIntake = new JoystickButton(driver, XboxController.Button.kA.value);
+  private final JoystickButton armDock = new JoystickButton(driver, XboxController.Button.kA.value);
   private final JoystickButton intakeIn = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
   private final JoystickButton intakeOut = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
   
@@ -74,10 +76,10 @@ public class RobotContainer {
   // This position is as low to the floor as the intake can get within arm constraints. 
   private final double INTAKE_LOW = 220; 
 
-  private final double OUTTAKE_MID = 162; //Need to  double Check
+  private final double OUTTAKE_MID = 160; //Need to  double Check
   private final double OUTTAKE_NEAR = 1.85; //Need to Check
   private final double OUTTAKE_FAR = 2.00; //Need to Check
-  private final double OUTTAKE_LOW = 220; //Need to double Check
+  private final double OUTTAKE_LOW = 205; //Need to double Check
 
   // Commands
 
@@ -215,9 +217,23 @@ public class RobotContainer {
 
 
     // Naming syntax: GP# (game pieces) C (omit if no charge station/climb) _ CS/MS/FS (close/middle/far side)
+    m_chooser.addOption("1meter", new PathPlannerFollowCommandOdo(s_Swerve, "testing124 Copy"));
     m_chooser.addOption("Basic Auton", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION), new PathPlannerFollowCommandOdo(s_Swerve, "Out of Community")));
 
-    m_chooser.setDefaultOption("Just score", new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), new ArmCommand(s_Arm, OUTTAKE_MID), new IntakeCommand(s_Arm, s_Intake, 1, false), new ArmCommand(s_Arm, DOCKED_POSITION)));
+    m_chooser.setDefaultOption("Just score and run", 
+    new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), 
+    new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), 
+    new ArmCommand(s_Arm, OUTTAKE_MID), 
+    new IntakeCommand(s_Arm, s_Intake, 1, false), 
+    new ArmCommand(s_Arm, DOCKED_POSITION), 
+    new PathPlannerFollowCommandOdo(s_Swerve, "testing124")));
+
+    m_chooser.addOption("Just score", 
+    new SequentialCommandGroup(new InstantCommand(() -> s_Intake.intake()), 
+    new WaitCommand(0.2), new InstantCommand(() -> s_Intake.stop()), 
+    new ArmCommand(s_Arm, OUTTAKE_MID), 
+    new IntakeCommand(s_Arm, s_Intake, 1, false), 
+    new ArmCommand(s_Arm, DOCKED_POSITION)));
 
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -241,7 +257,7 @@ public class RobotContainer {
     armHighScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_MID)));
     armLowScore.onTrue(new InstantCommand(() -> s_Arm.setGoal(OUTTAKE_LOW)));
     armHighIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_HIGH)));
-    armLowIntake.onTrue(new InstantCommand(() -> s_Arm.setGoal(INTAKE_LOW)));
+    armDock.onTrue(new InstantCommand(() -> s_Arm.setGoal(DOCKED_POSITION)));
 
     intakeIn.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, true));
     intakeOut.onTrue(new IntakeCommand(s_Arm, s_Intake, 1, false));
@@ -259,7 +275,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new SequentialCommandGroup(new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), m_chooser.getSelected());
+    // Auton taken from chooser
+    return new SequentialCommandGroup(new InstantCommand(() -> s_Arm.setCurrentPosToGoal()), new InstantCommand(() -> s_Swerve.zeroGyro()), 
+    m_chooser.getSelected());
+    // return null;
   }
 }

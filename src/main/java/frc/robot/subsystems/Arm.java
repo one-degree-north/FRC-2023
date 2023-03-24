@@ -74,11 +74,13 @@ public class Arm extends SubsystemBase {
 
     configArmMotor();
     configArmCanCoder();
-    resetToAbsolute();
     m_armSlave.follow(m_armMotor);
     m_pidController.disableContinuousInput();
 
     m_pidController.setTolerance(TOLERANCE);
+
+    resetToAbsolute();
+
 
     setCurrentPosToGoal();
   }
@@ -121,11 +123,10 @@ public class Arm extends SubsystemBase {
 }
 
   public void resetToAbsolute(){
-    waitForCanCoder();
 
     double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - m_angleOffset, ArmConstants.gearRatio);
-    m_armMotor.setSelectedSensorPosition(absolutePosition);
-    m_armSlave.setSelectedSensorPosition(absolutePosition);
+    System.err.println(m_armMotor.setSelectedSensorPosition(absolutePosition));
+    System.err.println(m_armSlave.setSelectedSensorPosition(absolutePosition));
   }
 
   public Rotation2d getCanCoder(){
@@ -164,11 +165,11 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("Arm CanCoder", getPosition());
+    SmartDashboard.putNumber("Arm CanCoder", getCanCoder().getDegrees());
     SmartDashboard.putNumber("Arm Right", Conversions.falconToDegrees(m_armMotor.getSelectedSensorPosition(), ArmConstants.gearRatio));
     SmartDashboard.putNumber("Arm Left", Conversions.falconToDegrees(m_armSlave.getSelectedSensorPosition(), ArmConstants.gearRatio));
-    // SmartDashboard.putNumber("Current Arm Goal", getGoal());
-    SmartDashboard.putNumber("Current Arm Setpoint", m_pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Arm Position", getPosition());
+    SmartDashboard.putNumber("Current Arm Goal", m_pidController.getGoal().position);
     
 
 
@@ -185,14 +186,6 @@ public class Arm extends SubsystemBase {
     m_pidController.getSetpoint().velocity)
     );
 
-    // m_armMotor.setVoltage(
-    //   /** PID Controller calculates output based on 
-    //   the current position and the goal **/
-    //   m_pidController.calculate(getPosition()) 
-    //   /** Feedforward uses setpoints calculated by 
-    //   motion profiling **/
-    // + m_feedForwardController.calculate(
-    //   m_pidController.getGoal().position, m_pidController.getGoal().velocity));
   }
 
   

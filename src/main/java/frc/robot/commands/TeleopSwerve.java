@@ -22,6 +22,8 @@ public class TeleopSwerve extends CommandBase {
     private int rotationAxis;
     private SlewRateLimiter slewRateLimiterX;
     private SlewRateLimiter slewRateLimiterY;
+    private SlewRateLimiter slewRateLimiterR;
+    private final double rotationSpeed = 0.5;
 
     /**
      * Driver control
@@ -38,6 +40,8 @@ public class TeleopSwerve extends CommandBase {
         this.openLoop = openLoop;
         this.slewRateLimiterX = new SlewRateLimiter(rateLimit);
         this.slewRateLimiterY = new SlewRateLimiter(rateLimit);
+        this.slewRateLimiterR = new SlewRateLimiter(rateLimit);
+        
     }
 
     @Override
@@ -45,7 +49,7 @@ public class TeleopSwerve extends CommandBase {
 
         double yAxis = slewRateLimiterX.calculate(-controller.getRawAxis(translationAxis));
         double xAxis = slewRateLimiterY.calculate(-controller.getRawAxis(strafeAxis));
-        double rAxis = -controller.getRawAxis(rotationAxis);
+        double rAxis = slewRateLimiterR.calculate(-controller.getRawAxis(rotationAxis));
         
         /* Deadbands */
         yAxis = (Math.abs(yAxis) < Constants.stickDeadband) ? 0 : yAxis;
@@ -53,7 +57,7 @@ public class TeleopSwerve extends CommandBase {
         rAxis = (Math.abs(rAxis) < Constants.stickDeadband) ? 0 : rAxis;
 
         translation = new Translation2d(yAxis, xAxis).times(Constants.SwerveConstants.maxSpeed);
-        rotation = rAxis * Constants.SwerveConstants.maxAngularVelocity;
+        rotation = rAxis * Constants.SwerveConstants.maxAngularVelocity * rotationSpeed;
         s_Swerve.drive(translation, rotation, fieldRelative, openLoop);
     }
 }

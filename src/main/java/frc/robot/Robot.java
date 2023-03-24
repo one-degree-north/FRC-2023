@@ -85,15 +85,16 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    // m_robotContainer.s_Swerve.resetModulesToAbsolute();
+
+    //   // TO DO: Find better gyro resetting times
+    // m_robotContainer.s_Swerve.zeroGyro();
+
+    // m_robotContainer.s_Arm.resetToAbsolute();
+    m_robotContainer.s_Arm.setCurrentPosToGoal();
+    m_robotContainer.s_Swerve.zeroGyro();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
-      m_robotContainer.s_Swerve.resetModulesToAbsolute();
-
-      // TO DO: Find better gyro resetting times
-      m_robotContainer.s_Swerve.zeroGyro();
-
-      m_robotContainer.s_Arm.resetToAbsolute();
-      m_robotContainer.s_Arm.setCurrentPosToGoal();
 
     }
   }
