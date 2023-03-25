@@ -241,11 +241,12 @@ public class RobotContainer {
     
 
     m_chooser.addOption("TEST Auto Balance", new BalanceCommand(targAngle, csSpeed, false, s_Swerve));
-    
+
     m_chooser.addOption("Charge Station Real", new SequentialCommandGroup(
       new PathPlannerFollowCommandOdo(s_Swerve, "charge station"), 
     new InstantCommand(() -> s_Swerve.zeroGyro()), 
     new BalanceCommand(targAngle, csSpeed, false, s_Swerve)));
+    m_chooser.addOption("Nothing", null);
 
     // ShuffleBoard auto selection options
     SmartDashboard.putData("Auto choices", m_chooser);
